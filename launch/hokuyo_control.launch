@@ -17,7 +17,7 @@
 		<param name="angle_min" value="-1.5707963"/>
 		<param name="angle_max" value="1.5707963"/>
 		
-		<remap from="/scan" to="/scan_robot1"/>
+		<remap from="/scan" to="/scan"/>
 	</node>
 
 </launch>
