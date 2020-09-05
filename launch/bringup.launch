@@ -1,0 +1,9 @@
+<launch>
+
+	<!-- COMMON_GEROBOT_APPLICATION {DC MOTOR} -->
+	<include file="$(find common_gerobot_application)/launch/dc_motor_control.launch"/>
+	
+	<!-- COMMON_GEROBOT_APPLICATION {CAMERA} -->
+	<include file="$(find common_gerobot_application)/launch/camera_control.launch"/>
+
+</launch>
