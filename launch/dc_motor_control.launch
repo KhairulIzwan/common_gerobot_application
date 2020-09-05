@@ -1,0 +1,13 @@
+<launch>
+
+	<!-- COMMON_ARDUINO_APPLICATION {DC MOTOR CONTROL} -->
+	<node	pkg="rosserial_python" 
+		name="dc_motor_control" 
+		type="serial_node.py"> 
+		<!-- output="screen"> -->
+		
+		<param name="port" value="/dev/ttyUSB0"/>
+		<param name="baud" value="57600"/>
+	</node>
+
+</launch>
