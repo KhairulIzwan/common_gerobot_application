@@ -94,6 +94,8 @@ class CameraPreview:
 			self.newCameraInfo.width = self.imgWidth
 			self.newCameraInfo.height = self.imgHeight
 
+			self.newCameraInfo_pub.publish(self.newCameraInfo)
+
 		else:
 			self.image_received = False
 
