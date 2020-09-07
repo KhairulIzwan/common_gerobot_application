@@ -43,7 +43,8 @@ class CameraPreview:
 
 		# Subscribe to CompressedImage msg
 		self.image_topic = "/cv_camera/image_raw/compressed"
-		self.image_sub = rospy.Subscriber(self.image_topic, CompressedImage, self.cbImage)
+		self.image_sub = rospy.Subscriber(self.image_topic, CompressedImage, 
+			self.cbImage)
 
 		# Subscribe to CameraInfo msg
 		self.cameraInfo_topic = "/cv_camera/camera_info"
@@ -52,11 +53,12 @@ class CameraPreview:
 
 		# Publish to CompressedImage msg
 		self.newImage_topic = "/cv_camera/image_raw/compressed_new"
-		self.newImage_pub = rospy.Publisher(self.newImage_topic, CompressedImage, queue_size=10)
+		self.newImage_pub = rospy.Publisher(self.newImage_topic, CompressedImage, 
+			queue_size=10)
 
 		# Publish to CameraInfo msg
 		self.newCameraInfo_topic = "/cv_camera/camera_info_new"
-		self.newCameraInfo_pub = rospy.Publisher(self.cameraInfo_topic, CameraInfo, 
+		self.newCameraInfo_pub = rospy.Publisher(self.cameraInfo_topic, CameraInfo
 			, queue_size=10)
 
 		# Allow up to one second to connection
