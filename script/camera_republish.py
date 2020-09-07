@@ -31,7 +31,9 @@ class CameraPreview:
 	def __init__(self):
 
 		self.bridge = CvBridge()
-
+		self.newImage = CompressedImage()
+		self.newCameraInfo = CameraInfo()
+		
 		self.image_received = False
 
 		rospy.logwarn("CameraPreview Node [ONLINE]...")
@@ -47,6 +49,15 @@ class CameraPreview:
 		self.cameraInfo_topic = "/cv_camera/camera_info"
 		self.cameraInfo_sub = rospy.Subscriber(self.cameraInfo_topic, CameraInfo, 
 			self.cbCameraInfo)
+
+		# Publish to CompressedImage msg
+		self.newImage_topic = "/cv_camera/image_raw/compressed_new"
+		self.newImage_pub = rospy.Publisher(self.newImage_topic, CompressedImage, queue_size=10)
+
+		# Publish to CameraInfo msg
+		self.newCameraInfo_topic = "/cv_camera/camera_info_new"
+		self.newCameraInfo_pub = rospy.Publisher(self.cameraInfo_topic, CameraInfo, 
+			, queue_size=10)
 
 		# Allow up to one second to connection
 		rospy.sleep(1)
@@ -69,6 +80,17 @@ class CameraPreview:
 		if self.image is not None:
 			self.image_received = True
 			self.cv_image = self.image.copy()
+
+			#### Create CompressedIamge ####
+#			msg = CompressedImage()
+#			msg.header.stamp = rospy.Time.now()
+			self.newImage.format = "jpeg"
+			self.newImage.data = np.array(cv2.imencode('.jpg', self.cv_image)[1]).tostring()
+			# Publish new image
+			self.newImage_pub.publish(self.newImage)
+
+			self.newCameraInfo.width = self.imgWidth
+			self.newCameraInfo.height = self.imgHeight
 
 		else:
 			self.image_received = False
