@@ -178,7 +178,7 @@ class LaserPreview:
 	# rospy shutdown callback
 	def cbShutdown(self):
 
-		rospy.logerr("[Robot1] LaserRead Node [OFFLINE]...")
+		rospy.logerr("Laser Obstacle Node [OFFLINE]...")
 		
 		self.move.linear.x = 0.00
 		self.move.linear.y = 0.00
