@@ -64,7 +64,7 @@ class CameraConverter:
 					)
 
 		# Publish to CameraInfo msg
-		self.newCameraInfo_topic = "/cv_camera/camera_info_new"
+		self.newCameraInfo_topic = "/cv_camera/camera_info_converted"
 		self.newCameraInfo_pub = rospy.Publisher(
 						self.cameraInfo_topic, 
 						CameraInfo, 
