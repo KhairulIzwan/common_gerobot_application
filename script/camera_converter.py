@@ -86,12 +86,13 @@ class CameraConverter:
 			# comment if the image is mirrored
 			self.cv_image = cv2.flip(self.cv_image, 1)
 
+			self.cv_image_clone = self.cv_image.copy()
+
 		except CvBridgeError as e:
 			print(e)
 
 		if self.cv_image is not None:
 			self.image_received = True
-			self.cv_image_clone = self.cv_image.copy()
 			
 			self.newImage_pub.publish(
 				self.bridge.cv2_to_imgmsg(
