@@ -46,12 +46,13 @@ class LaserPreview:
 
 		# Allow up to one second to connection
 		rospy.sleep(1)
-			
+
 	# Get LaserScan reading
 	def cbLaser(self, msg):
 
 		try:
 			self.scanValue = msg.ranges
+			self.minAng = msg.angle_min
 
 		except KeyboardInterrupt as e:
 			print(e)
@@ -59,17 +60,93 @@ class LaserPreview:
 		if self.scanValue is not None:
 			self.laser_received = True
 		else:
-			self.laser_received = False		
+			self.laser_received = False
+			
+	def cbScan(self):
+	
+		scan_filter = []
+
+		samples = len(self.scanValue)
+		samples_view = 1024
+
+		if samples_view > samples:
+			samples_view = samples
+
+		if samples_view is 1:
+			scan_filter.append(self.scanValue[len(self.scanValue) // 2])
+
+		else:
+			right_lidar_samples = self.scanValue[(len(self.scanValue) // 2):len(self.scanValue)]
+			left_lidar_samples = self.scanValue[0:(len(self.scanValue) // 2) - 1]
+			scan_filter.extend(left_lidar_samples + right_lidar_samples)
+
+		for i in range(len(scan_filter)):
+			if scan_filter[i] == float('Inf'):
+				scan_filter[i] = 3.5
+			elif math.isnan(scan_filter[i]):
+				scan_filter[i] = 0
+
+		return scan_filter		
 
 	# Print info
 	def cbLaserInfo(self):
 		if self.laser_received:
+			lidar_distances = self.cbScan()
+			
 			rospy.loginfo(
 				"Total data recieved: %d, Read Value [0]: %.4f"
-				% (len(self.scanValue), self.scanValue[0])
+				% (len(lidar_distances), lidar_distances[0])
 				)
+				
+#			center = lidar_distances[len(lidar_distances) // 2]
+#			right = lidar_distances[1 * (len(self.scanValue) // 3)]
+#			left = lidar_distances[2 * (len(self.scanValue) // 3)]
+
+##			rospy.loginfo("L: %.4f, C: %.4f, R: %.4f" % (left, center, right))
+#				
+#			if right > 0.6 and right > left:
+##				self.pubMoveR()
+#				rospy.logwarn("Right")
+#			elif left > 0.6 and right < left:
+##				self.pubMoveL()
+#				rospy.logwarn("Left")
+#			elif right < 0.6 and left < 0.6 and center > 0.6:
+##				self.pubMove()
+#				rospy.logwarn("Center")
+#			elif right < 0.6 and left < 0.6 and center < 0.6:
+##				self.pubStop()
+#				rospy.logwarn("Stop")
 		else:
 			rospy.logerr("No Laser Reading")
+#			self.pubStop()
+#			rospy.logwarn("Stop")
+			
+		# Allow up to one second to connection
+		rospy.sleep(0.1)
+		
+#	# Get LaserScan reading
+#	def cbLaser(self, msg):
+
+#		try:
+#			self.scanValue = msg.ranges
+
+#		except KeyboardInterrupt as e:
+#			print(e)
+
+#		if self.scanValue is not None:
+#			self.laser_received = True
+#		else:
+#			self.laser_received = False		
+
+#	# Print info
+#	def cbLaserInfo(self):
+#		if self.laser_received:
+#			rospy.loginfo(
+#				"Total data recieved: %d, Read Value [0]: %.4f"
+#				% (len(self.scanValue), self.scanValue[0])
+#				)
+#		else:
+#			rospy.logerr("No Laser Reading")
 
 	# rospy shutdown callback
 	def cbShutdown(self):
