@@ -19,6 +19,8 @@ import math
 class LaserPreview:
 	def __init__(self):
 
+		self.direction = " "
+
 		rospy.logwarn("Laser Obstacle Node [ONLINE]...")
 
 		# rospy shutdown
@@ -89,16 +91,14 @@ class LaserPreview:
 
 	# Print info
 	def cbLaserInfo(self):
-		direction = " "
+
 		if self.laser_received:
 			lidar_distances = self.cbScan()
 			
 			center = lidar_distances[len(lidar_distances) // 2]
 			right = lidar_distances[1 * (len(self.scanValue) // 3)]
 			left = lidar_distances[2 * (len(self.scanValue) // 3)]
-			
-			rospy.loginfo("L: %.4f, C: %.4f, R: %.4f DIR: %s" % (left, center, right, direction))
-				
+
 #			if right > 0.6 and right > left:
 ##				self.pubMoveR()
 #				rospy.logwarn("Right")
@@ -114,15 +114,18 @@ class LaserPreview:
 
 			if (left > 0.6 and center > 0.6 and right > 0.6):
 				self.pubMove()
-				direction = "F"
+				self.direction = "F"
 			elif (left < 0.6 and center > 0.6 and right > 0.6):
 				self.pubMoveR()
-				direction = "R"
+				self.direction = "R"
 			elif (left > 0.6 and center > 0.6 and right < 0.6):
 				self.pubMoveL()
-				direction = "L"
+				self.direction = "L"
 			else:
 				self.pubStop()
+
+			rospy.loginfo("L: %.4f, C: %.4f, R: %.4f DIR: %s" % (left, center, right, self.direction))
+
 		else:
 			rospy.logerr("No Laser Reading")
 			self.pubStop()
