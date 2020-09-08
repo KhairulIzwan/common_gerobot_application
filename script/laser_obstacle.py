@@ -97,7 +97,7 @@ class LaserPreview:
 			
 			center = lidar_distances[len(lidar_distances) // 2]
 			right = lidar_distances[1 * (len(self.scanValue) // 3)]
-			left = lidar_distances[2 * (len(self.scanValue) // 3)]
+			left = lidar_distances[3 * (len(self.scanValue) // 3)]
 
 #			if right > 0.6 and right > left:
 ##				self.pubMoveR()
