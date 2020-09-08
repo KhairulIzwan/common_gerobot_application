@@ -111,17 +111,17 @@ class LaserPreview:
 ##				self.pubStop()
 #				rospy.logwarn("Stop")
 
-			if center > 0.6:
+			if center > 0.6 and right < 0.6 and left < 0.6:
 				self.pubMove()
 			else:
 				self.pubStop()
 		else:
 			rospy.logerr("No Laser Reading")
 			self.pubStop()
-			rospy.logwarn("Stop")
+#			rospy.logwarn("Stop")
 			
-		# Allow up to one second to connection
-		rospy.sleep(0.1)
+#		# Allow up to one second to connection
+#		rospy.sleep(0.1)
 
 	# Publishing the Twist msg (STOP)
 	def pubStop(self):
