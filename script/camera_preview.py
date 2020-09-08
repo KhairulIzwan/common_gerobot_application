@@ -73,7 +73,7 @@ class CameraPreview:
 		except CvBridgeError as e:
 			print(e)
 
-		if self.image is not None:
+		if self.cv_image is not None:
 			self.image_received = True
 #			self.cv_image = self.image.copy()
 
