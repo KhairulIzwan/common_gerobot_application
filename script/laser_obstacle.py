@@ -125,7 +125,7 @@ class LaserPreview:
 #			rospy.logwarn("Stop")
 			
 #		# Allow up to one second to connection
-#		rospy.sleep(0.1)
+		rospy.sleep(0.1)
 
 	# Publishing the Twist msg (STOP)
 	def pubStop(self):
@@ -153,25 +153,25 @@ class LaserPreview:
 		
 	# Publishing the Twist msg (MOVE R)
 	def pubMoveR(self):
-		self.move.linear.x = 0.03
+		self.move.linear.x = 0.02
 		self.move.linear.y = 0.00
 		self.move.linear.z = 0.00
 
 		self.move.angular.x = 0.00
 		self.move.angular.y = 0.00
-		self.move.angular.z = 0.2
+		self.move.angular.z = 0.1
 
 		self.twist_pub.publish(self.move)
 		
 	# Publishing the Twist msg (MOVE L)
 	def pubMoveL(self):
-		self.move.linear.x = 0.03
+		self.move.linear.x = 0.02
 		self.move.linear.y = 0.00
 		self.move.linear.z = 0.00
 
 		self.move.angular.x = 0.00
 		self.move.angular.y = 0.00
-		self.move.angular.z = -0.2
+		self.move.angular.z = -0.1
 
 		self.twist_pub.publish(self.move)
 		
