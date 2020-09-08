@@ -83,7 +83,7 @@ class LaserPreview:
 			if scan_filter[i] == float('Inf'):
 				scan_filter[i] = 3.5
 			elif math.isnan(scan_filter[i]):
-				scan_filter[i] = 0
+				scan_filter[i] = 3.5
 
 		return scan_filter		
 
@@ -111,17 +111,11 @@ class LaserPreview:
 ##				self.pubStop()
 #				rospy.logwarn("Stop")
 
-			if ((left > 0.6 and center > 0.6 and right > 0.6) or 
-				(left > 0.6 and center == 0.0 and right > 0.6) or
-				(left == 0.0 and center == 0.0 and right == 0.0)):
+			if (left > 0.6 and center > 0.6 and right > 0.6):
 				self.pubMove()
-			elif ((left < 0.6 and center > 0.6 and right > 0.6) or 
-				(left < 0.6 and center == 0.0 and right == 0.0) or
-				(left < 0.6 and center == 0.0 and right > 0.6)):
+			elif (left < 0.6 and center > 0.6 and right > 0.6):
 				self.pubMoveR()
-			elif ((left > 0.6 and center > 0.6 and right < 0.6) or 
-				(left == 0.0 and center == 0.0 and right < 0.6) or
-				(left > 0.6 and center == 0.0 and right < 0.6)):
+			elif (left > 0.6 and center > 0.6 and right < 0.6):
 				self.pubMoveL()
 			else:
 				self.pubStop()
