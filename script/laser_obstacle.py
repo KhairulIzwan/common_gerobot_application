@@ -89,12 +89,15 @@ class LaserPreview:
 
 	# Print info
 	def cbLaserInfo(self):
+		direction = " "
 		if self.laser_received:
 			lidar_distances = self.cbScan()
 			
 			center = lidar_distances[len(lidar_distances) // 2]
 			right = lidar_distances[1 * (len(self.scanValue) // 3)]
 			left = lidar_distances[2 * (len(self.scanValue) // 3)]
+			
+			rospy.loginfo("L: %.4f, C: %.4f, R: %.4f DIR: %s" % (left, center, right, direction))
 				
 #			if right > 0.6 and right > left:
 ##				self.pubMoveR()
@@ -120,8 +123,6 @@ class LaserPreview:
 				direction = "L"
 			else:
 				self.pubStop()
-				
-			rospy.loginfo("L: %.4f, C: %.4f, R: %.4f DIR: %s" % (left, center, right, direction))
 		else:
 			rospy.logerr("No Laser Reading")
 			self.pubStop()
