@@ -96,16 +96,16 @@ class LaserPreview:
 		if self.laser_received:
 			lidar_distances = self.cbScan()
 			
-			rospy.loginfo(
-				"Total data recieved: %d, Read Value [0]: %.4f"
-				% (len(lidar_distances), lidar_distances[0])
-				)
+#			rospy.loginfo(
+#				"Total data recieved: %d, Read Value [0]: %.4f"
+#				% (len(lidar_distances), lidar_distances[0])
+#				)
 				
-#			center = lidar_distances[len(lidar_distances) // 2]
-#			right = lidar_distances[1 * (len(self.scanValue) // 3)]
-#			left = lidar_distances[2 * (len(self.scanValue) // 3)]
+			center = lidar_distances[len(lidar_distances) // 2]
+			right = lidar_distances[1 * (len(self.scanValue) // 3)]
+			left = lidar_distances[2 * (len(self.scanValue) // 3)]
 
-##			rospy.loginfo("L: %.4f, C: %.4f, R: %.4f" % (left, center, right))
+			rospy.loginfo("L: %.4f, C: %.4f, R: %.4f" % (left, center, right))
 #				
 #			if right > 0.6 and right > left:
 ##				self.pubMoveR()
