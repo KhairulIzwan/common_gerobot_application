@@ -112,7 +112,7 @@ class LaserPreview:
 ##				self.pubStop()
 #				rospy.logwarn("Stop")
 
-			if (left > 0.6 and center > 0.6 and right > 0.6):
+			if ((left > 0.6 and center > 0.6 and right > 0.6) or (left > 0.6 and right > 0.6)):
 				self.pubMove()
 				self.direction = "F"
 			elif ((left < 0.6 and center > 0.6 and right > 0.6) or (left < 0.6 and center < 0.6 and right > 0.6)):
