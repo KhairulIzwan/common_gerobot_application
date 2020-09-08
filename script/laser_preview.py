@@ -104,7 +104,7 @@ class LaserPreview:
 			right = lidar_distances[1 * (len(self.scanValue) // 3)]
 			left = lidar_distances[2 * (len(self.scanValue) // 3)]
 
-			rospy.loginfo("L: %.4f, C: %.4f, R: %.4f" % (left, center, right))
+			rospy.loginfo("T: %d, L: %.4f, C: %.4f, R: %.4f" % (len(lidar_distances), left, center, right))
 		else:
 			rospy.logerr("No Laser Reading")
 
