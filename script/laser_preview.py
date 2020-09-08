@@ -64,7 +64,10 @@ class LaserPreview:
 	# Print info
 	def cbLaserInfo(self):
 		if self.laser_received:
-			rospy.loginfo(self.scanValue[0])
+			rospy.loginfo(
+				"Total data recieved: %d, Read Value [0]: %.4f"
+				% (len(self.scanValue), self.scanValue[0])
+				)
 		else:
 			rospy.logerr("No Laser Reading")
 
