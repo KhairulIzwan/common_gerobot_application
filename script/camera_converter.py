@@ -60,7 +60,7 @@ class CameraConverter:
 		self.newImage_pub = rospy.Publisher(
 					self.newImage_topic, 
 					Image, 
-					queue_size=10
+					queue_size=1
 					)
 
 		# Publish to CameraInfo msg
@@ -68,7 +68,7 @@ class CameraConverter:
 		self.newCameraInfo_pub = rospy.Publisher(
 						self.cameraInfo_topic, 
 						CameraInfo, 
-						queue_size=10
+						queue_size=1
 						)
 
 		# Allow up to one second to connection
