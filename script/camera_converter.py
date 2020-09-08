@@ -91,17 +91,18 @@ class CameraConverter:
 
 		if self.cv_image is not None:
 			self.image_received = True
-
+			self.cv_image_clone = self.cv_image.copy()
+			
 			self.newImage_pub.publish(
 				self.bridge.cv2_to_imgmsg(
-					self.cv_image, 
+					self.cv_image_clone, 
 					"bgr8"
 					)
 					)
 					
 
-			self.newCameraInfo.height = self.cv_image.shape[0]
-			self.newCameraInfo.width = self.cv_image.shape[1]
+			self.newCameraInfo.height = self.cv_image_clone.shape[0]
+			self.newCameraInfo.width = self.cv_image_clone.shape[1]
 
 			self.newCameraInfo_pub.publish(self.newCameraInfo)
 
