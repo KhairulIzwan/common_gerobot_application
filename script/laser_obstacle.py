@@ -96,8 +96,8 @@ class LaserPreview:
 			lidar_distances = self.cbScan()
 			
 			center = lidar_distances[len(lidar_distances) // 2]
-			right = lidar_distances[1 * (len(self.scanValue) // 3)]
-			left = lidar_distances[2 * (len(self.scanValue) // 3)]
+			right = lidar_distances[1 * ((1 * (len(self.scanValue) // 3)) // 3)]
+			left = lidar_distances[2 * ((2 * (len(self.scanValue) // 3)) // 3)]
 
 #			if right > 0.6 and right > left:
 ##				self.pubMoveR()
