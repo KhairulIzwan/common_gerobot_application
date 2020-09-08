@@ -40,15 +40,15 @@ class CameraPreview:
 		rospy.on_shutdown(self.cbShutdown)
 
 		# Subscribe to CompressedImage msg
-		self.image_topic = "/cv_camera/image_raw/compressed"
+		self.image_topic = "/cv_camera/image_raw/converted"
 		self.image_sub = rospy.Subscriber(
 					self.image_topic, 
-					CompressedImage, 
+					Image, 
 					self.cbImage
 					)
 
 		# Subscribe to CameraInfo msg
-		self.cameraInfo_topic = "/cv_camera/camera_info"
+		self.cameraInfo_topic = "/cv_camera/camera_info_converted"
 		self.cameraInfo_sub = rospy.Subscriber(
 					self.cameraInfo_topic, 
 					CameraInfo, 
@@ -62,13 +62,15 @@ class CameraPreview:
 	def cbImage(self, msg):
 
 		try:
-			# direct conversion to CV2
-			np_arr = np.fromstring(msg.data, np.uint8)
-			self.cv_image = cv2.imdecode(np_arr, cv2.IMREAD_COLOR) # OpenCV >= 3.0:
-#			self.image = imutils.rotate_bound(self.image, 90)
+#			# direct conversion to CV2
+#			np_arr = np.fromstring(msg.data, np.uint8)
+#			self.cv_image = cv2.imdecode(np_arr, cv2.IMREAD_COLOR) # OpenCV >= 3.0:
+##			self.image = imutils.rotate_bound(self.image, 90)
 
-			# comment if the image is mirrored
-#			self.image = cv2.flip(self.image, 1)
+#			# comment if the image is mirrored
+##			self.image = cv2.flip(self.image, 1)
+
+			self.cv_image = self.bridge.imgmsg_to_cv2(msg, "bgr8")
 
 		except CvBridgeError as e:
 			print(e)
