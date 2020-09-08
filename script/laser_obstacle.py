@@ -113,9 +113,9 @@ class LaserPreview:
 
 			if (left > 0.6 and center > 0.6 and right > 0.6):
 				self.pubMove()
-			elif (left < 0.6 and center > 0.6 and right > 0.6):
+			elif ((left < 0.6 and center > 0.6 and right > 0.6) or (left < 0.6 and center < 0.6 and right > 0.6)):
 				self.pubMoveR()
-			elif (left > 0.6 and center > 0.6 and right < 0.6):
+			elif ((left > 0.6 and center > 0.6 and right < 0.6) or (left > 0.6 and center < 0.6 and right < 0.6)):
 				self.pubMoveL()
 			else:
 				self.pubStop()
