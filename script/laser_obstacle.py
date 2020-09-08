@@ -19,7 +19,7 @@ import math
 class LaserPreview:
 	def __init__(self):
 
-		rospy.logwarn("[Robot1] LaserRead Node [ONLINE]...")
+		rospy.logwarn("Laser Obstacle Node [ONLINE]...")
 
 		# rospy shutdown
 		rospy.on_shutdown(self.cbShutdown)
@@ -90,21 +90,26 @@ class LaserPreview:
 
 			rospy.loginfo("L: %.4f, C: %.4f, R: %.4f" % (left, center, right))
 				
-			if right > 0.6 and right > left:
-#				self.pubMoveR()
-				rospy.logwarn("Right")
-			elif left > 0.6 and right < left:
-#				self.pubMoveL()
-				rospy.logwarn("Left")
-			elif right < 0.6 and left < 0.6 and center > 0.6:
-#				self.pubMove()
-				rospy.logwarn("Center")
-			elif right < 0.6 and left < 0.6 and center < 0.6:
-#				self.pubStop()
-				rospy.logwarn("Stop")
+#			if right > 0.6 and right > left:
+##				self.pubMoveR()
+#				rospy.logwarn("Right")
+#			elif left > 0.6 and right < left:
+##				self.pubMoveL()
+#				rospy.logwarn("Left")
+#			elif right < 0.6 and left < 0.6 and center > 0.6:
+##				self.pubMove()
+#				rospy.logwarn("Center")
+#			elif right < 0.6 and left < 0.6 and center < 0.6:
+##				self.pubStop()
+#				rospy.logwarn("Stop")
+
+			if center > 0.6:
+				self.pubMove()
+			else:
+				self.pubStop()
 		else:
 			rospy.logerr("No Laser Reading")
-#			self.pubStop()
+			self.pubStop()
 			rospy.logwarn("Stop")
 			
 		# Allow up to one second to connection
@@ -124,7 +129,7 @@ class LaserPreview:
 		
 	# Publishing the Twist msg (MOVE)
 	def pubMove(self):
-		self.move.linear.x = 0.05
+		self.move.linear.x = 0.03
 		self.move.linear.y = 0.00
 		self.move.linear.z = 0.00
 
@@ -136,7 +141,7 @@ class LaserPreview:
 		
 	# Publishing the Twist msg (MOVE R)
 	def pubMoveR(self):
-		self.move.linear.x = 0.05
+		self.move.linear.x = 0.03
 		self.move.linear.y = 0.00
 		self.move.linear.z = 0.00
 
@@ -148,7 +153,7 @@ class LaserPreview:
 		
 	# Publishing the Twist msg (MOVE L)
 	def pubMoveL(self):
-		self.move.linear.x = 0.05
+		self.move.linear.x = 0.03
 		self.move.linear.y = 0.00
 		self.move.linear.z = 0.00
 
@@ -176,7 +181,7 @@ class LaserPreview:
 if __name__ == '__main__':
 
 	# Initialize
-	rospy.init_node('robot1_read_scan', anonymous=False)
+	rospy.init_node('scan_obstacle', anonymous=False)
 	laser = LaserPreview()
 
 	# Camera preview
