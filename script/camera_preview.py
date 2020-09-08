@@ -83,8 +83,8 @@ class CameraPreview:
 	# Get CameraInfo
 	def cbCameraInfo(self, msg):
 
-		self.imgWidth = msg.height
-		self.imgHeight = msg.width
+		self.imgWidth = msg.width
+		self.imgHeight = msg.height
 
 	# Image information callback
 	def cbInfo(self):
