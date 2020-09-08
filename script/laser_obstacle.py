@@ -95,8 +95,6 @@ class LaserPreview:
 			center = lidar_distances[len(lidar_distances) // 2]
 			right = lidar_distances[1 * (len(self.scanValue) // 3)]
 			left = lidar_distances[2 * (len(self.scanValue) // 3)]
-
-			rospy.loginfo("L: %.4f, C: %.4f, R: %.4f" % (left, center, right))
 				
 #			if right > 0.6 and right > left:
 ##				self.pubMoveR()
@@ -113,12 +111,17 @@ class LaserPreview:
 
 			if (left > 0.6 and center > 0.6 and right > 0.6):
 				self.pubMove()
-			elif ((left < 0.6 and center > 0.6 and right > 0.6) or (left > 0.6 and center < 0.6 and right < 0.6)):
+				direction = "F"
+			elif (left < 0.6 and center > 0.6 and right > 0.6):
 				self.pubMoveR()
-			elif ((left > 0.6 and center > 0.6 and right < 0.6) or (left < 0.6 and center < 0.6 and right > 0.6)):
+				direction = "R"
+			elif (left > 0.6 and center > 0.6 and right < 0.6):
 				self.pubMoveL()
+				direction = "L"
 			else:
 				self.pubStop()
+				
+			rospy.loginfo("L: %.4f, C: %.4f, R: %.4f DIR: %s" % (left, center, right, direction))
 		else:
 			rospy.logerr("No Laser Reading")
 			self.pubStop()
