@@ -15,8 +15,9 @@ common_gerobot_application
 ├── package.xml
 ├── README.md
 ├── script
+│   ├── camera_converter.py
 │   ├── camera_preview.py
-│   ├── camera_republish.py
+│   ├── laser_preview.py
 │   └── teleop_key.py
 └── src
 ```
@@ -31,7 +32,7 @@ A project named as **"Capacity Buildingfor Caregivers and Older Persons in**
 2. cv_camera
 3. rosserial
 4. common_arduino_application
-5.
+5. urg_node
 
 # How it works?
 ### camera_preview.py
@@ -46,3 +47,9 @@ Controllig the robot with tele-operation [keyboard]
 
 1. roslaunch common_gerobot_application dc_motor_control.launch
 2. rosrun common_gerobot_application teleop_key.py
+
+### teleop_key.py
+Controllig the robot with tele-operation [keyboard]
+
+1. roslaunch common_gerobot_application hokuyo_control.launch
+2. rosrun common_gerobot_application laser_preview.py
