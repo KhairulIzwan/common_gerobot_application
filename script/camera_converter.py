@@ -92,7 +92,7 @@ class CameraConverter:
 		if self.cv_image is not None:
 			self.image_received = True
 
-			self.cvImage_pub.publish(
+			self.newImage_pub.publish(
 				self.bridge.cv2_to_imgmsg(
 					self.cv_image, 
 					"bgr8"
