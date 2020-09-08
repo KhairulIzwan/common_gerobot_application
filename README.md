@@ -38,4 +38,11 @@ A project named as **"Capacity Buildingfor Caregivers and Older Persons in**
 Previewing a stream of image from the camera [webcam, usbcam, raspicam, etc]
 
 1. roslaunch common_gerobot_application camera_control.launch
-2. rosrun common_gerobot_application camera_preview.py
+2. rosrun common_gerobot_application camera_converter.py [re-correct the image orientation]
+3. rosrun common_gerobot_application camera_preview.py
+
+### teleop_key.py
+Controllig the robot with tele-operation [keyboard]
+
+1. roslaunch common_gerobot_application dc_motor_control.launch
+2. rosrun common_gerobot_application teleop_key.py
