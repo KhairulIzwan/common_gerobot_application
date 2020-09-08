@@ -26,6 +26,9 @@
 from sensor_msgs.msg import LaserScan
 #from geometry_msgs.msg import Twist
 
+import numpy as np
+import math
+
 import rospy
 
 class LaserPreview:
