@@ -41,12 +41,19 @@ class CameraPreview:
 
 		# Subscribe to CompressedImage msg
 		self.image_topic = "/cv_camera/image_raw/compressed"
-		self.image_sub = rospy.Subscriber(self.image_topic, CompressedImage, self.cbImage)
+		self.image_sub = rospy.Subscriber(
+					self.image_topic, 
+					CompressedImage, 
+					self.cbImage
+					)
 
 		# Subscribe to CameraInfo msg
 		self.cameraInfo_topic = "/cv_camera/camera_info"
-		self.cameraInfo_sub = rospy.Subscriber(self.cameraInfo_topic, CameraInfo, 
-			self.cbCameraInfo)
+		self.cameraInfo_sub = rospy.Subscriber(
+					self.cameraInfo_topic, 
+					CameraInfo, 
+					self.cbCameraInfo
+					)
 
 		# Allow up to one second to connection
 		rospy.sleep(1)
@@ -57,18 +64,18 @@ class CameraPreview:
 		try:
 			# direct conversion to CV2
 			np_arr = np.fromstring(msg.data, np.uint8)
-			self.image = cv2.imdecode(np_arr, cv2.IMREAD_COLOR) # OpenCV >= 3.0:
-			self.image = imutils.rotate_bound(self.image, 90)
+			self.cv_image = cv2.imdecode(np_arr, cv2.IMREAD_COLOR) # OpenCV >= 3.0:
+#			self.image = imutils.rotate_bound(self.image, 90)
 
 			# comment if the image is mirrored
-			self.image = cv2.flip(self.image, 1)
+#			self.image = cv2.flip(self.image, 1)
 
 		except CvBridgeError as e:
 			print(e)
 
 		if self.image is not None:
 			self.image_received = True
-			self.cv_image = self.image.copy()
+#			self.cv_image = self.image.copy()
 
 		else:
 			self.image_received = False
@@ -91,15 +98,36 @@ class CameraPreview:
 
 		self.timestr = time.strftime("%Y%m%d-%H:%M:%S")
 
-		cv2.putText(self.cv_image, "{}".format(self.timestr), (10, 20), 
-			fontFace, fontScale, color, thickness, lineType, 
-			bottomLeftOrigin)
-		cv2.putText(self.cv_image, "Sample", (10, self.imgHeight-10), 
-			fontFace, fontScale, color, thickness, lineType, 
-			bottomLeftOrigin)
-		cv2.putText(self.cv_image, "(%d, %d)" % (self.imgWidth, self.imgHeight), 
-			(self.imgWidth-100, self.imgHeight-10), fontFace, fontScale, 
-			color, thickness, lineType, bottomLeftOrigin)
+		cv2.putText(self.cv_image, "{}".format(self.timestr), 
+				(10, 20), 
+				fontFace, 
+				fontScale, 
+				color, 
+				thickness, 
+				lineType, 
+				bottomLeftOrigin
+				)
+
+		cv2.putText(self.cv_image, "Sample", 
+				(10, self.imgHeight-10), 
+				fontFace, 
+				fontScale, 
+				color, 
+				thickness, 
+				lineType, 
+				bottomLeftOrigin
+				)
+
+		cv2.putText(self.cv_image, "(%d, %d)" % 
+				(self.imgWidth, self.imgHeight), 
+				(self.imgWidth-100, self.imgHeight-10), 
+				fontFace, 
+				fontScale, 
+				color, 
+				thickness, 
+				lineType, 
+				bottomLeftOrigin
+				)
 
 	# Show the output frame
 	def cbShowImage(self):
