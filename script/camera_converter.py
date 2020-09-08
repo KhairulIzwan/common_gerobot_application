@@ -27,39 +27,49 @@ from cv_bridge import CvBridgeError
 
 import rospy
 
-class CameraPreview:
+class CameraConverter:
 	def __init__(self):
 
 		self.bridge = CvBridge()
-		self.newImage = CompressedImage()
 		self.newCameraInfo = CameraInfo()
 		
 		self.image_received = False
 
-		rospy.logwarn("CameraPreview Node [ONLINE]...")
+		rospy.logwarn("Camera Converter Node [ONLINE]...")
 
 		# rospy shutdown
 		rospy.on_shutdown(self.cbShutdown)
 
 		# Subscribe to CompressedImage msg
 		self.image_topic = "/cv_camera/image_raw/compressed"
-		self.image_sub = rospy.Subscriber(self.image_topic, CompressedImage, 
-			self.cbImage)
+		self.image_sub = rospy.Subscriber(
+					self.image_topic, 
+					CompressedImage, 
+					self.cbImage
+					)
 
 		# Subscribe to CameraInfo msg
 		self.cameraInfo_topic = "/cv_camera/camera_info"
-		self.cameraInfo_sub = rospy.Subscriber(self.cameraInfo_topic, CameraInfo, 
-			self.cbCameraInfo)
+		self.cameraInfo_sub = rospy.Subscriber(
+					self.cameraInfo_topic, 
+					CameraInfo, 
+					self.cbCameraInfo)
 
-		# Publish to CompressedImage msg
-		self.newImage_topic = "/cv_camera/image_raw/compressed_new"
-		self.newImage_pub = rospy.Publisher(self.newImage_topic, CompressedImage, 
-			queue_size=10)
+		# Publish to Image msg
+		self.newImage_topic = "/cv_camera/image_raw/converted"
+		self.newImage_pub = rospy.Publisher(
+					self.newImage_topic, 
+					Image, 
+					queue_size=10
+					)
 
 		# Publish to CameraInfo msg
 		self.newCameraInfo_topic = "/cv_camera/camera_info_new"
-		self.newCameraInfo_pub = rospy.Publisher(self.cameraInfo_topic, CameraInfo
-			, queue_size=10)
+		self.newCameraInfo_pub = rospy.Publisher(
+						self.cameraInfo_topic, 
+						CameraInfo, 
+						queue_size=10
+						)
 
 		# Allow up to one second to connection
 		rospy.sleep(1)
@@ -70,29 +80,28 @@ class CameraPreview:
 		try:
 			# direct conversion to CV2
 			np_arr = np.fromstring(msg.data, np.uint8)
-			self.image = cv2.imdecode(np_arr, cv2.IMREAD_COLOR) # OpenCV >= 3.0:
-			self.image = imutils.rotate_bound(self.image, 90)
+			self.cv_image = cv2.imdecode(np_arr, cv2.IMREAD_COLOR) # OpenCV >= 3.0:
+			self.cv_image = imutils.rotate_bound(self.cv_image, 90)
 
 			# comment if the image is mirrored
-			self.image = cv2.flip(self.image, 1)
+			self.cv_image = cv2.flip(self.cv_image, 1)
 
 		except CvBridgeError as e:
 			print(e)
 
-		if self.image is not None:
+		if self.cv_image is not None:
 			self.image_received = True
-			self.cv_image = self.image.copy()
 
-			#### Create CompressedIamge ####
-#			msg = CompressedImage()
-#			msg.header.stamp = rospy.Time.now()
-			self.newImage.format = "jpeg"
-			self.newImage.data = np.array(cv2.imencode('.jpg', self.cv_image)[1]).tostring()
-			# Publish new image
-			self.newImage_pub.publish(self.newImage)
+			self.cvImage_pub.publish(
+				self.bridge.cv2_to_imgmsg(
+					self.cv_image, 
+					"bgr8"
+					)
+					)
+					
 
-			self.newCameraInfo.width = self.imgWidth
-			self.newCameraInfo.height = self.imgHeight
+			self.newCameraInfo.height = self.cv_image.shape[0]
+			self.newCameraInfo.width = self.cv_image.shape[1]
 
 			self.newCameraInfo_pub.publish(self.newCameraInfo)
 
@@ -102,8 +111,8 @@ class CameraPreview:
 	# Get CameraInfo
 	def cbCameraInfo(self, msg):
 
-		self.imgWidth = msg.height
-		self.imgHeight = msg.width
+		self.imgWidth = msg.width
+		self.imgHeight = msg.height
 
 	# Image information callback
 	def cbInfo(self):
@@ -117,20 +126,41 @@ class CameraPreview:
 
 		self.timestr = time.strftime("%Y%m%d-%H:%M:%S")
 
-		cv2.putText(self.cv_image, "{}".format(self.timestr), (10, 20), 
-			fontFace, fontScale, color, thickness, lineType, 
-			bottomLeftOrigin)
-		cv2.putText(self.cv_image, "Sample", (10, self.imgHeight-10), 
-			fontFace, fontScale, color, thickness, lineType, 
-			bottomLeftOrigin)
-		cv2.putText(self.cv_image, "(%d, %d)" % (self.imgWidth, self.imgHeight), 
-			(self.imgWidth-100, self.imgHeight-10), fontFace, fontScale, 
-			color, thickness, lineType, bottomLeftOrigin)
+		cv2.putText(self.cv_image, "{}".format(self.timestr), 
+			(10, 20), 
+			fontFace, 
+			fontScale, 
+			color, 
+			thickness, 
+			lineType, 
+			bottomLeftOrigin
+			)
+
+		cv2.putText(self.cv_image, "Sample", 
+			(10, self.newCameraInfo.height-10), 
+			fontFace, 
+			fontScale, 
+			color, 
+			thickness, 
+			lineType, 
+			bottomLeftOrigin
+			)
+
+		cv2.putText(self.cv_image, "(%d, %d)" % 
+			(self.newCameraInfo.width, self.newCameraInfo.height), 
+			(self.newCameraInfo.width-100, self.newCameraInfo.height-10), 
+			fontFace, 
+			fontScale, 
+			color, 
+			thickness, 
+			lineType, 
+			bottomLeftOrigin
+			)
 
 	# Show the output frame
 	def cbShowImage(self):
 
-		cv2.imshow("CameraPreview", self.cv_image)
+		cv2.imshow("Camera Converter", self.cv_image)
 		cv2.waitKey(1)
 
 	# Preview image + info
@@ -145,14 +175,14 @@ class CameraPreview:
 	# rospy shutdown callback
 	def cbShutdown(self):
 
-		rospy.logerr("CameraPreview Node [OFFLINE]...")
+		rospy.logerr("Camera Converter Node [OFFLINE]...")
 		cv2.destroyAllWindows()
 
 if __name__ == '__main__':
 
 	# Initialize
-	rospy.init_node('camera_preview', anonymous=False)
-	camera = CameraPreview()
+	rospy.init_node('camera_converter', anonymous=False)
+	camera = CameraConverter()
 
 	# Camera preview
 	while not rospy.is_shutdown():
