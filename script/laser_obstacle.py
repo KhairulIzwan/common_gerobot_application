@@ -116,11 +116,11 @@ class LaserPreview:
 				self.pubMove()
 				self.direction = "F"
 			elif (left < 0.6 and center > 0.6 and right > 0.6):
-				self.pubMoveR()
-				self.direction = "R"
-			elif (left > 0.6 and center > 0.6 and right < 0.6):
 				self.pubMoveL()
 				self.direction = "L"
+			elif (left > 0.6 and center > 0.6 and right < 0.6):
+				self.pubMoveR()
+				self.direction = "R"
 			else:
 				self.pubStop()
 
