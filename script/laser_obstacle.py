@@ -111,11 +111,17 @@ class LaserPreview:
 ##				self.pubStop()
 #				rospy.logwarn("Stop")
 
-			if (center > 0.6 and right > 0.6 and left > 0.6) or (center == 0 and right > 0.6 and left > 0.6):
+			if (left > 0.6 and center > 0.6 and right > 0.6) or 
+				(left > 0.6 and center == 0.0 and right > 0.6) or
+				(left == 0.0 and center == 0.0 and right == 0.0):
 				self.pubMove()
-			elif (center > 0.6 and right > 0.6 and left < 0.6) or (center < 0.6 and right > 0.6 and left < 0.6):
+			elif (left < 0.6 and center > 0.6 and right > 0.6) or 
+				(left < 0.6 and center == 0.0 and right == 0.0) or
+				(left < 0.6 and center == 0.0 and right > 0.6):
 				self.pubMoveR()
-			elif (center > 0.6 and right < 0.6 and left > 0.6) or (center < 0.6 and right < 0.6 and left > 0.6):
+			elif (left > 0.6 and center > 0.6 and right < 0.6) or 
+				(left == 0.0 and center == 0.0 and right < 0.6) or
+				(left > 0.6 and center == 0.0 and right < 0.6):
 				self.pubMoveL()
 			else:
 				self.pubStop()
