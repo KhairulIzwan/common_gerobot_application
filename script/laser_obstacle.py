@@ -28,12 +28,20 @@ class LaserPreview:
 		self.move = Twist()
 			
 		# Subscribe to LaserScan msg
-		self.laser_topic = "/scan_robot1"
-		self.laser_sub = rospy.Subscriber(self.laser_topic, LaserScan, self.cbLaser)
+		self.laser_topic = "/scan"
+		self.laser_sub = rospy.Subscriber(
+			self.laser_topic, 
+			LaserScan, 
+			self.cbLaser
+			)
 		
 		# Publish to Twist msg
-		twist_topic = "/cmd_vel_robot1"
-		self.twist_pub = rospy.Publisher(twist_topic, Twist, queue_size=10)
+		self.twist_topic = "/cmd_vel"
+		self.twist_pub = rospy.Publisher(
+			self.twist_topic, 
+			Twist, 
+			queue_size=10
+			)
 
 		# Allow up to one second to connection
 		rospy.sleep(1)
