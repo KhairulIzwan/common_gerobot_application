@@ -134,6 +134,11 @@ class CameraPreview:
 	# Show the output frame
 	def cbShowImage(self):
 
+		self.cv_image = imutils.rotate_bound(self.cv_image, 90)
+
+		# comment if the image is mirrored
+#		self.cv_image = cv2.flip(self.cv_image, 1)
+
 		cv2.imshow("CameraPreview", self.cv_image)
 		cv2.waitKey(1)
 
