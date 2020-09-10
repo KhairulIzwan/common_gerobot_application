@@ -166,7 +166,6 @@ class CameraConverter:
 					"bgr8"
 					)
 					)
-					
 
 			self.newCameraInfo.height = self.cv_image_clone.shape[0]
 			self.newCameraInfo.width = self.cv_image_clone.shape[1]
