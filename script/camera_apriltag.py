@@ -1,0 +1,217 @@
+#!/usr/bin/env python
+
+################################################################################
+## {Description}: Recognizing Apriltag (Detecting Single AprilTag Only!)
+################################################################################
+## Author: Khairul Izwan Bin Kamsani
+## Version: {1}.{0}.{0}
+## Email: {wansnap@gmail.com}
+################################################################################
+
+"""
+Image published (CompressedImage) from tello originally size of 960x720 pixels
+We will try to resize it using imutils.resize (with aspect ratio) to width = 320
+and then republish it as Image
+"""
+
+# import the necessary Python packages
+from __future__ import print_function
+import sys
+import cv2
+import time
+import numpy as np
+import imutils
+import random
+import apriltag
+
+# import the necessary ROS packages
+from std_msgs.msg import String
+from sensor_msgs.msg import Image
+
+from cv_bridge import CvBridge
+from cv_bridge import CvBridgeError
+
+import rospy
+
+class CameraAprilTag:
+	def __init__(self):
+
+		self.bridge = CvBridge()
+		self.image_received = False
+		self.detector = apriltag.Detector()
+
+		rospy.logwarn("AprilTag Detection Node [ONLINE]...")
+
+		# rospy shutdown
+		rospy.on_shutdown(self.cbShutdown)
+
+		# Subscribe to Image msg
+		self.telloImage_topic = "/tello/image_raw_resized"
+		self.telloImage_sub = rospy.Subscriber(
+				self.telloImage_topic, 
+				Image, 
+				self.cbImage
+				)
+			
+		# Allow up to one second to connection
+		rospy.sleep(1)
+
+	# Convert image to OpenCV format
+	def cbImage(self, msg):
+
+		try:
+			# direct conversion to cv2
+			self.cv_image = self.bridge.imgmsg_to_cv2(msg, "bgr8")
+
+		except CvBridgeError as e:
+			print(e)
+
+		if self.cv_image is not None:
+			self.image_received = True
+		else:
+			self.image_received = False
+
+	# Image information callback
+	def cbInfo(self):
+
+		fontFace = cv2.FONT_HERSHEY_DUPLEX
+		fontScale = 0.5
+		color = (255, 255, 255)
+		thickness = 1
+		lineType = cv2.LINE_AA
+		bottomLeftOrigin = False # if True (text upside down)
+
+		self.timestr = time.strftime("%Y%m%d-%H:%M:%S")
+
+		cv2.putText(self.cv_image, "{}".format(self.timestr), 
+				(10, 20), 
+				fontFace, 
+				fontScale, 
+				color, 
+				thickness, 
+				lineType, 
+				bottomLeftOrigin
+				)
+
+		cv2.putText(self.cv_image, "Sample", 
+				(10, self.imgHeight-10), 
+				fontFace, 
+				fontScale, 
+				color, 
+				thickness, 
+				lineType, 
+				bottomLeftOrigin
+				)
+
+		cv2.putText(self.cv_image, "(%d, %d)" % 
+				(self.imgWidth, self.imgHeight), 
+				(self.imgWidth-100, self.imgHeight-10), 
+				fontFace, 
+				fontScale, 
+				color, 
+				thickness, 
+				lineType, 
+				bottomLeftOrigin
+				)
+
+	def cbAprilTag(self):
+		
+		fontFace = cv2.FONT_HERSHEY_PLAIN
+		fontScale = 0.7
+		color = (255, 255, 255)
+		colorPose = (0, 0, 255)
+		colorIMU = (255, 0, 255)
+		thickness = 1
+		lineType = cv2.LINE_AA
+		bottomLeftOrigin = False # if True (text upside down)
+		
+		cv_image_gray = cv2.cvtColor(self.cv_image, cv2.COLOR_BGR2GRAY)
+		
+		result = self.detector.detect(cv_image_gray)
+
+		if len(result) != 0:
+			for i in range(len(result)):
+				rospy.loginfo("Detect ID: %d" % (result[i][1]))
+
+				cv2.putText(
+					self.cv_image, 
+					"ID: %d" % (result[i][1]), 
+					(int(result[i][6][0]) - 20, int(result[i][6][1]) - 20), 
+					fontFace, 
+					fontScale, 
+					color, 
+					thickness, 
+					lineType, 
+					bottomLeftOrigin)
+
+				cv2.line(
+					self.cv_image, 
+					(int(result[i][7][0][0]), int(result[i][7][0][1])), 
+					(int(result[i][7][1][0]), int(result[i][7][1][1])), 
+					(0, 0, 255), 
+					3)
+
+				cv2.line(
+					self.cv_image, 
+					(int(result[i][7][0][0]), int(result[i][7][0][1])), 
+					(int(result[i][7][3][0]), int(result[i][7][3][1])), 
+					(0, 255, 0), 
+					3)
+
+				cv2.line(
+					self.cv_image, 
+					(int(result[i][7][1][0]), int(result[i][7][1][1])), 
+					(int(result[i][7][2][0]), int(result[i][7][2][1])), 
+					(255, 0, 0), 
+					3)
+
+				cv2.line(
+					self.cv_image, 
+					(int(result[i][7][2][0]), int(result[i][7][2][1])), 
+					(int(result[i][7][3][0]), int(result[i][7][3][1])), 
+					(255, 0, 0), 
+					3)
+
+				cv2.circle(
+					self.cv_image, 
+					(int(result[i][6][0]), int(result[i][6][1])), 
+					5, 
+					(255, 0, 0), 
+					2)
+		else:
+			pass
+
+	# Show the output frame
+	def cbShowImage(self):
+
+		cv2.imshow("AprilTag Detection", self.cv_image)
+		cv2.waitKey(1)
+
+	# Preview image + info
+	def cbPreview(self):
+
+		if self.image_received:
+#			self.cbInfo()
+			self.cbAprilTag()
+			self.cbShowImage()
+		else:
+			rospy.logerr("No images recieved")
+
+	# rospy shutdown callback
+	def cbShutdown(self):
+
+		rospy.logerr("AprilTag Detection Node [OFFLINE]...")
+		cv2.destroyAllWindows()
+
+if __name__ == '__main__':
+
+	# Initialize
+	rospy.init_node('camera_apriltag', anonymous=False)
+	camera = CameraAprilTag()
+	
+#	r = rospy.Rate(10)
+	
+	# Camera preview
+	while not rospy.is_shutdown():
+		camera.cbPreview()
+#		r.sleep()

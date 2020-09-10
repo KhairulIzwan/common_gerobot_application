@@ -12,14 +12,23 @@ common_gerobot_application
 │   ├── dc_motor_control.launch
 │   ├── encoder_control.launch
 │   └── hokuyo_control.launch
+├── msg
+│   └── objCenter.msg
 ├── package.xml
 ├── README.md
 ├── script
 │   ├── camera_converter.py
 │   ├── camera_preview.py
+│   ├── laser_obstacle.py
 │   ├── laser_preview.py
 │   └── teleop_key.py
+├── setup.py
 └── src
+    └── common_gerobot_application
+        ├── __init__.py
+        ├── makesimpleprofile.py
+        └── pid.py
+
 ```
 
 # About
@@ -48,8 +57,14 @@ Controllig the robot with tele-operation [keyboard]
 1. roslaunch common_gerobot_application dc_motor_control.launch
 2. rosrun common_gerobot_application teleop_key.py
 
-### teleop_key.py
-Controllig the robot with tele-operation [keyboard]
+### laser_preview.py
+Testing for the LIDAR reading
 
 1. roslaunch common_gerobot_application hokuyo_control.launch
 2. rosrun common_gerobot_application laser_preview.py
+
+### laser_obstacle.py
+Run robot avoiding the obstacle; stop
+
+1. roslaunch common_gerobot_application hokuyo_control.launch
+2. rosrun common_gerobot_application laser_obstacle.py
