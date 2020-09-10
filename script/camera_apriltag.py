@@ -26,7 +26,7 @@ import apriltag
 
 # import the necessary ROS packages
 from std_msgs.msg import String
-from sensor_msgs.msg import Image
+from sensor_msgs.msg import Image, CameraInfo
 
 from cv_bridge import CvBridge
 from cv_bridge import CvBridgeError
