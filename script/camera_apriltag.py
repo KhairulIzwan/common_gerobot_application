@@ -26,7 +26,7 @@ import apriltag
 
 # import the necessary ROS packages
 from std_msgs.msg import String
-from sensor_msgs.msg import Image, CameraInfo
+from sensor_msgs.msg import Image
 
 from cv_bridge import CvBridge
 from cv_bridge import CvBridgeError
@@ -51,14 +51,6 @@ class CameraAprilTag:
 					self.image_topic, 
 					Image, 
 					self.cbImage
-					)
-
-		# Subscribe to CameraInfo msg
-		self.cameraInfo_topic = "/cv_camera/camera_info_converted"
-		self.cameraInfo_sub = rospy.Subscriber(
-					self.cameraInfo_topic, 
-					CameraInfo, 
-					self.cbCameraInfo
 					)
 					
 		# Allow up to one second to connection
@@ -87,12 +79,6 @@ class CameraAprilTag:
 
 		else:
 			self.image_received = False
-
-	# Get CameraInfo
-	def cbCameraInfo(self, msg):
-
-		self.imgWidth = msg.width
-		self.imgHeight = msg.height
 		
 	# Image information callback
 	def cbInfo(self):
@@ -153,55 +139,54 @@ class CameraAprilTag:
 		result = self.detector.detect(cv_image_gray)
 
 		if len(result) != 0:
-			rospy.loginfo("Detect ID: %d" % (result[0][1]))
-#			for i in range(len(result)):
-#				rospy.loginfo("Detect ID: %d" % (result[i][1]))
+			for i in range(len(result)):
+				rospy.loginfo("Detect ID: %d" % (result[i][1]))
 
-#				cv2.putText(
-#					self.cv_image, 
-#					"ID: %d" % (result[i][1]), 
-#					(int(result[i][6][0]) - 20, int(result[i][6][1]) - 20), 
-#					fontFace, 
-#					fontScale, 
-#					color, 
-#					thickness, 
-#					lineType, 
-#					bottomLeftOrigin)
+				cv2.putText(
+					self.cv_image, 
+					"ID: %d" % (result[i][1]), 
+					(int(result[i][6][0]) - 20, int(result[i][6][1]) - 20), 
+					fontFace, 
+					fontScale, 
+					color, 
+					thickness, 
+					lineType, 
+					bottomLeftOrigin)
 
-#				cv2.line(
-#					self.cv_image, 
-#					(int(result[i][7][0][0]), int(result[i][7][0][1])), 
-#					(int(result[i][7][1][0]), int(result[i][7][1][1])), 
-#					(0, 0, 255), 
-#					3)
+				cv2.line(
+					self.cv_image, 
+					(int(result[i][7][0][0]), int(result[i][7][0][1])), 
+					(int(result[i][7][1][0]), int(result[i][7][1][1])), 
+					(0, 0, 255), 
+					3)
 
-#				cv2.line(
-#					self.cv_image, 
-#					(int(result[i][7][0][0]), int(result[i][7][0][1])), 
-#					(int(result[i][7][3][0]), int(result[i][7][3][1])), 
-#					(0, 255, 0), 
-#					3)
+				cv2.line(
+					self.cv_image, 
+					(int(result[i][7][0][0]), int(result[i][7][0][1])), 
+					(int(result[i][7][3][0]), int(result[i][7][3][1])), 
+					(0, 255, 0), 
+					3)
 
-#				cv2.line(
-#					self.cv_image, 
-#					(int(result[i][7][1][0]), int(result[i][7][1][1])), 
-#					(int(result[i][7][2][0]), int(result[i][7][2][1])), 
-#					(255, 0, 0), 
-#					3)
+				cv2.line(
+					self.cv_image, 
+					(int(result[i][7][1][0]), int(result[i][7][1][1])), 
+					(int(result[i][7][2][0]), int(result[i][7][2][1])), 
+					(255, 0, 0), 
+					3)
 
-#				cv2.line(
-#					self.cv_image, 
-#					(int(result[i][7][2][0]), int(result[i][7][2][1])), 
-#					(int(result[i][7][3][0]), int(result[i][7][3][1])), 
-#					(255, 0, 0), 
-#					3)
+				cv2.line(
+					self.cv_image, 
+					(int(result[i][7][2][0]), int(result[i][7][2][1])), 
+					(int(result[i][7][3][0]), int(result[i][7][3][1])), 
+					(255, 0, 0), 
+					3)
 
-#				cv2.circle(
-#					self.cv_image, 
-#					(int(result[i][6][0]), int(result[i][6][1])), 
-#					5, 
-#					(255, 0, 0), 
-#					2)
+				cv2.circle(
+					self.cv_image, 
+					(int(result[i][6][0]), int(result[i][6][1])), 
+					5, 
+					(255, 0, 0), 
+					2)
 		else:
 			pass
 
@@ -233,9 +218,9 @@ if __name__ == '__main__':
 	rospy.init_node('camera_apriltag', anonymous=False)
 	camera = CameraAprilTag()
 	
-#	r = rospy.Rate(10)
+	r = rospy.Rate(10)
 	
 	# Camera preview
 	while not rospy.is_shutdown():
 		camera.cbPreview()
-#		r.sleep()
+		r.sleep()
