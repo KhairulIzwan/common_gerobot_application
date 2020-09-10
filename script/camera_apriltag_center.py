@@ -25,13 +25,7 @@ from sensor_msgs.msg import Image, CameraInfo, CompressedImage
 from cv_bridge import CvBridge
 from cv_bridge import CvBridgeError
 
-from tello_driver.msg import TelloStatus
-
-from nav_msgs.msg import Odometry
-
-from sensor_msgs.msg import Imu
-
-from common_tello_application.msg import objCenter as objCoord
+from common_gerobot_application.msg import objCenter as objCoord
 
 import rospy
 
