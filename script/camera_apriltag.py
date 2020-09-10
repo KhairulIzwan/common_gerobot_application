@@ -8,12 +8,6 @@
 ## Email: {wansnap@gmail.com}
 ################################################################################
 
-"""
-Image published (CompressedImage) from tello originally size of 960x720 pixels
-We will try to resize it using imutils.resize (with aspect ratio) to width = 320
-and then republish it as Image
-"""
-
 # import the necessary Python packages
 from __future__ import print_function
 import sys
