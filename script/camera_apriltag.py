@@ -69,10 +69,6 @@ class CameraAprilTag:
 ##			self.image = cv2.flip(self.image, 1)
 
 			self.cv_image = self.bridge.imgmsg_to_cv2(msg, "bgr8")
-			self.cv_image = imutils.rotate(self.cv_image, 90)
-
-#			# comment if the image is mirrored
-			self.cv_image = cv2.flip(self.cv_image, 1)
 
 		except CvBridgeError as e:
 			print(e)
@@ -196,6 +192,11 @@ class CameraAprilTag:
 
 	# Show the output frame
 	def cbShowImage(self):
+
+		self.cv_image = imutils.rotate(self.cv_image, 90)
+
+		# comment if the image is mirrored
+		self.cv_image = cv2.flip(self.cv_image, 1)
 
 		cv2.imshow("AprilTag Detection", self.cv_image)
 		cv2.waitKey(1)
