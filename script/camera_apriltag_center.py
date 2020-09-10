@@ -89,8 +89,8 @@ class CameraAprilTag:
 	# Convert image to OpenCV format
 	def cbCameraInfo(self, msg):
 
-		self.imgWidth = msg.height
-		self.imgHeight = msg.width
+		self.imgWidth = msg.width
+		self.imgHeight = msg.height
 
 	# Image information callback
 	def cbInfo(self):
@@ -197,8 +197,8 @@ class CameraAprilTag:
 				self.objectCoord.centerX = self.imgWidth // 2
 				self.objectCoord.centerY = self.imgHeight // 2
 			else:
-				self.objectCoord.centerX = int(result[0][6][1])
-				self.objectCoord.centerY = int(result[0][6][0])
+				self.objectCoord.centerX = int(result[0][6][0])
+				self.objectCoord.centerY = int(result[0][6][1])
 		else:
 			self.objectCoord.centerX = self.imgWidth // 2
 			self.objectCoord.centerY = self.imgHeight // 2
@@ -216,7 +216,7 @@ class CameraAprilTag:
 
 		self.cv_image_clone = imutils.resize(
 					self.cv_image.copy(), 
-					width=320
+					width=160
 					)
 
 		cv2.imshow("AprilTag Center", self.cv_image_clone)
