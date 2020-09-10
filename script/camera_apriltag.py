@@ -52,7 +52,15 @@ class CameraAprilTag:
 					Image, 
 					self.cbImage
 					)
-			
+
+		# Subscribe to CameraInfo msg
+		self.cameraInfo_topic = "/cv_camera/camera_info_converted"
+		self.cameraInfo_sub = rospy.Subscriber(
+					self.cameraInfo_topic, 
+					CameraInfo, 
+					self.cbCameraInfo
+					)
+					
 		# Allow up to one second to connection
 		rospy.sleep(1)
 
@@ -80,6 +88,12 @@ class CameraAprilTag:
 		else:
 			self.image_received = False
 
+	# Get CameraInfo
+	def cbCameraInfo(self, msg):
+
+		self.imgWidth = msg.width
+		self.imgHeight = msg.height
+		
 	# Image information callback
 	def cbInfo(self):
 
