@@ -141,7 +141,7 @@ class CameraPreview:
 	def cbPreview(self):
 
 		if self.image_received:
-			self.cbInfo()
+#			self.cbInfo()
 			self.cbShowImage()
 		else:
 			rospy.logerr("No images recieved")
