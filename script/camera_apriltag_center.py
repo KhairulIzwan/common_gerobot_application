@@ -197,8 +197,8 @@ class CameraAprilTag:
 				self.objectCoord.centerX = self.imgWidth // 2
 				self.objectCoord.centerY = self.imgHeight // 2
 			else:
-				self.objectCoord.centerX = int(result[0][6][0])
-				self.objectCoord.centerY = int(result[0][6][1])
+				self.objectCoord.centerX = int(result[0][6][1])
+				self.objectCoord.centerY = int(result[0][6][0])
 		else:
 			self.objectCoord.centerX = self.imgWidth // 2
 			self.objectCoord.centerY = self.imgHeight // 2
