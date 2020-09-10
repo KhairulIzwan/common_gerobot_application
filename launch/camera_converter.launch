@@ -1,0 +1,10 @@
+<launch>
+
+	<!-- COMMON_GEROBOT_APPLICATION {CAMERA_CONVERTER} -->
+	<node	pkg="common_gerobot_application" 
+		name="camera_converter" 
+		type="camera_converter.py"> 
+		<!-- output="screen"> -->
+	</node>
+
+</launch>
