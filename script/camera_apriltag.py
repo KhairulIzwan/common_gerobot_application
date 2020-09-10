@@ -45,13 +45,13 @@ class CameraAprilTag:
 		# rospy shutdown
 		rospy.on_shutdown(self.cbShutdown)
 
-		# Subscribe to Image msg
-		self.telloImage_topic = "/tello/image_raw_resized"
-		self.telloImage_sub = rospy.Subscriber(
-				self.telloImage_topic, 
-				Image, 
-				self.cbImage
-				)
+		# Subscribe to CompressedImage msg
+		self.image_topic = "/cv_camera/image_raw/converted"
+		self.image_sub = rospy.Subscriber(
+					self.image_topic, 
+					Image, 
+					self.cbImage
+					)
 			
 		# Allow up to one second to connection
 		rospy.sleep(1)
