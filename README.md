@@ -36,6 +36,8 @@ A project named as **"Capacity Buildingfor Caregivers and Older Persons in**
 **Elderly Living Institution for Contactless Deliveries using Indoor Autonomous**
 **Platform”**
 
+![GitHub Logo](https://github.com/KhairulIzwan/common_gerobot_application/blob/master/img/WhatsApp%20Image%202020-09-10%20at%208.00.21%20PM.jpeg)
+
 # Required Package
 1. imutils
 2. cv_camera
