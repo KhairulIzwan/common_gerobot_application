@@ -60,7 +60,14 @@ class CameraAprilTag:
 	def cbImage(self, msg):
 
 		try:
-			# direct conversion to cv2
+#			# direct conversion to CV2
+#			np_arr = np.fromstring(msg.data, np.uint8)
+#			self.cv_image = cv2.imdecode(np_arr, cv2.IMREAD_COLOR) # OpenCV >= 3.0:
+##			self.image = imutils.rotate_bound(self.image, 90)
+
+#			# comment if the image is mirrored
+##			self.image = cv2.flip(self.image, 1)
+
 			self.cv_image = self.bridge.imgmsg_to_cv2(msg, "bgr8")
 
 		except CvBridgeError as e:
@@ -68,6 +75,8 @@ class CameraAprilTag:
 
 		if self.cv_image is not None:
 			self.image_received = True
+#			self.cv_image = self.image.copy()
+
 		else:
 			self.image_received = False
 
