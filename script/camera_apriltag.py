@@ -153,54 +153,55 @@ class CameraAprilTag:
 		result = self.detector.detect(cv_image_gray)
 
 		if len(result) != 0:
-			for i in range(len(result)):
-				rospy.loginfo("Detect ID: %d" % (result[i][1]))
+			rospy.loginfo("Detect ID: %d" % (result[0][1]))
+#			for i in range(len(result)):
+#				rospy.loginfo("Detect ID: %d" % (result[i][1]))
 
-				cv2.putText(
-					self.cv_image, 
-					"ID: %d" % (result[i][1]), 
-					(int(result[i][6][0]) - 20, int(result[i][6][1]) - 20), 
-					fontFace, 
-					fontScale, 
-					color, 
-					thickness, 
-					lineType, 
-					bottomLeftOrigin)
+#				cv2.putText(
+#					self.cv_image, 
+#					"ID: %d" % (result[i][1]), 
+#					(int(result[i][6][0]) - 20, int(result[i][6][1]) - 20), 
+#					fontFace, 
+#					fontScale, 
+#					color, 
+#					thickness, 
+#					lineType, 
+#					bottomLeftOrigin)
 
-				cv2.line(
-					self.cv_image, 
-					(int(result[i][7][0][0]), int(result[i][7][0][1])), 
-					(int(result[i][7][1][0]), int(result[i][7][1][1])), 
-					(0, 0, 255), 
-					3)
+#				cv2.line(
+#					self.cv_image, 
+#					(int(result[i][7][0][0]), int(result[i][7][0][1])), 
+#					(int(result[i][7][1][0]), int(result[i][7][1][1])), 
+#					(0, 0, 255), 
+#					3)
 
-				cv2.line(
-					self.cv_image, 
-					(int(result[i][7][0][0]), int(result[i][7][0][1])), 
-					(int(result[i][7][3][0]), int(result[i][7][3][1])), 
-					(0, 255, 0), 
-					3)
+#				cv2.line(
+#					self.cv_image, 
+#					(int(result[i][7][0][0]), int(result[i][7][0][1])), 
+#					(int(result[i][7][3][0]), int(result[i][7][3][1])), 
+#					(0, 255, 0), 
+#					3)
 
-				cv2.line(
-					self.cv_image, 
-					(int(result[i][7][1][0]), int(result[i][7][1][1])), 
-					(int(result[i][7][2][0]), int(result[i][7][2][1])), 
-					(255, 0, 0), 
-					3)
+#				cv2.line(
+#					self.cv_image, 
+#					(int(result[i][7][1][0]), int(result[i][7][1][1])), 
+#					(int(result[i][7][2][0]), int(result[i][7][2][1])), 
+#					(255, 0, 0), 
+#					3)
 
-				cv2.line(
-					self.cv_image, 
-					(int(result[i][7][2][0]), int(result[i][7][2][1])), 
-					(int(result[i][7][3][0]), int(result[i][7][3][1])), 
-					(255, 0, 0), 
-					3)
+#				cv2.line(
+#					self.cv_image, 
+#					(int(result[i][7][2][0]), int(result[i][7][2][1])), 
+#					(int(result[i][7][3][0]), int(result[i][7][3][1])), 
+#					(255, 0, 0), 
+#					3)
 
-				cv2.circle(
-					self.cv_image, 
-					(int(result[i][6][0]), int(result[i][6][1])), 
-					5, 
-					(255, 0, 0), 
-					2)
+#				cv2.circle(
+#					self.cv_image, 
+#					(int(result[i][6][0]), int(result[i][6][1])), 
+#					5, 
+#					(255, 0, 0), 
+#					2)
 		else:
 			pass
 
@@ -214,7 +215,7 @@ class CameraAprilTag:
 	def cbPreview(self):
 
 		if self.image_received:
-			self.cbInfo()
+#			self.cbInfo()
 			self.cbAprilTag()
 			self.cbShowImage()
 		else:
