@@ -41,10 +41,10 @@ class CameraConverter:
 		rospy.on_shutdown(self.cbShutdown)
 
 		# Subscribe to CompressedImage msg
-		self.image_topic = "/cv_camera/image_raw/compressed"
+		self.image_topic = "/cv_camera/image_raw"
 		self.image_sub = rospy.Subscriber(
 					self.image_topic, 
-					CompressedImage, 
+					Image, 
 					self.cbImage
 					)
 
@@ -79,8 +79,10 @@ class CameraConverter:
 
 		try:
 			# direct conversion to CV2
-			np_arr = np.fromstring(msg.data, np.uint8)
-			self.cv_image = cv2.imdecode(np_arr, cv2.IMREAD_COLOR) # OpenCV >= 3.0:
+#			np_arr = np.fromstring(msg.data, np.uint8)
+#			self.cv_image = cv2.imdecode(np_arr, cv2.IMREAD_COLOR) # OpenCV >= 3.0:
+			
+			self.cv_image = self.bridge.imgmsg_to_cv2(msg, "bgr8")
 			self.cv_image = imutils.rotate_bound(self.cv_image, 90)
 
 			# comment if the image is mirrored
