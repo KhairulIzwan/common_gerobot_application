@@ -158,35 +158,35 @@ class CameraAprilTag:
 					(int(result[i][7][0][0]), int(result[i][7][0][1])), 
 					(int(result[i][7][1][0]), int(result[i][7][1][1])), 
 					(0, 0, 255), 
-					3)
+					1)
 
 				cv2.line(
 					self.cv_image, 
 					(int(result[i][7][0][0]), int(result[i][7][0][1])), 
 					(int(result[i][7][3][0]), int(result[i][7][3][1])), 
 					(0, 255, 0), 
-					3)
+					1)
 
 				cv2.line(
 					self.cv_image, 
 					(int(result[i][7][1][0]), int(result[i][7][1][1])), 
 					(int(result[i][7][2][0]), int(result[i][7][2][1])), 
 					(255, 0, 0), 
-					3)
+					1)
 
 				cv2.line(
 					self.cv_image, 
 					(int(result[i][7][2][0]), int(result[i][7][2][1])), 
 					(int(result[i][7][3][0]), int(result[i][7][3][1])), 
 					(255, 0, 0), 
-					3)
+					1)
 
 				cv2.circle(
 					self.cv_image, 
 					(int(result[i][6][0]), int(result[i][6][1])), 
 					5, 
 					(255, 0, 0), 
-					2)
+					1)
 		else:
 			pass
 
