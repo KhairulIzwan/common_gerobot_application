@@ -8,8 +8,8 @@
 		<param name="rate" value="30" />
 		<param name="device_id" value="0" />
 		<param name="frame_id" value="camera_primer" />
-		<param name="image_width" value="160" />
-		<param name="image_height" value="120" />
+		<param name="image_width" value="320" />
+		<param name="image_height" value="240" />
 		<!-- <param name="camera_info" value="???" /> -->
 		<!-- <param name="file" value="???" /> -->
   	</node>
