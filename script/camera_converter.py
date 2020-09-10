@@ -83,10 +83,10 @@ class CameraConverter:
 #			self.cv_image = cv2.imdecode(np_arr, cv2.IMREAD_COLOR) # OpenCV >= 3.0:
 			
 			self.cv_image = self.bridge.imgmsg_to_cv2(msg, "bgr8")
-			self.cv_image = imutils.rotate(self.cv_image, 90)
+#			self.cv_image = imutils.rotate(self.cv_image, 90)
 
 			# comment if the image is mirrored
-			self.cv_image = cv2.flip(self.cv_image, 1)
+#			self.cv_image = cv2.flip(self.cv_image, 1)
 
 			self.cv_image_clone = self.cv_image.copy()
 
