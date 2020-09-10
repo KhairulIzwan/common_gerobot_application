@@ -208,6 +208,12 @@ class CameraAprilTag:
 	# Show the output frame
 	def cbShowImage(self):
 
+
+		self.cv_image_clone = imutils.rotate_bound(self.cv_image_clone, 90)
+
+		# comment if the image is mirrored
+#		self.cv_image = cv2.flip(self.cv_image, 1)
+
 		self.cv_image_clone = imutils.resize(
 					self.cv_image.copy(), 
 					width=320
