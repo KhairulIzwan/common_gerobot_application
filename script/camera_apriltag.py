@@ -214,7 +214,7 @@ class CameraAprilTag:
 	def cbPreview(self):
 
 		if self.image_received:
-#			self.cbInfo()
+			self.cbInfo()
 			self.cbAprilTag()
 			self.cbShowImage()
 		else:
