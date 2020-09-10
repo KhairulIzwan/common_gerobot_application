@@ -140,7 +140,7 @@ class CameraAprilTag:
 
 		if len(result) != 0:
 			for i in range(len(result)):
-				rospy.loginfo("Detect ID: %d" % (result[i][1]))
+#				rospy.loginfo("Detect ID: %d" % (result[i][1]))
 
 				cv2.putText(
 					self.cv_image, 
