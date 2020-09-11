@@ -135,16 +135,16 @@ class CameraAprilTag:
 		tiltSpeed = mapped(abs(self.tiltOut), 0, self.imgHeight // 2, 0, self.MAX_LIN_VEL)
 		
 		if self.panOut < 0:
-			self.telloCmdVel.linear.x = -panSpeed
-		elif self.panOut > 0:
 			self.telloCmdVel.linear.x = panSpeed
+		elif self.panOut > 0:
+			self.telloCmdVel.linear.x = -panSpeed
 		else:
 			self.telloCmdVel.linear.x = 0
 			
 		if self.tiltOut > 0:
-			self.telloCmdVel.angular.z = tiltSpeed
-		elif self.tiltOut < 0:
 			self.telloCmdVel.angular.z = -tiltSpeed
+		elif self.tiltOut < 0:
+			self.telloCmdVel.angular.z = tiltSpeed
 		else:
 			self.telloCmdVel.angular.z = 0
 
