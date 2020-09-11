@@ -3,12 +3,53 @@
 ```
 common_gerobot_application
 ├── CMakeLists.txt
+├── img
+│   ├── WhatsApp Image 2020-09-10 at 8.00.07 PM (1).jpeg
+│   ├── WhatsApp Image 2020-09-10 at 8.00.07 PM.jpeg
+│   ├── WhatsApp Image 2020-09-10 at 8.00.08 PM (1).jpeg
+│   ├── WhatsApp Image 2020-09-10 at 8.00.08 PM.jpeg
+│   ├── WhatsApp Image 2020-09-10 at 8.00.09 PM (1).jpeg
+│   ├── WhatsApp Image 2020-09-10 at 8.00.09 PM.jpeg
+│   ├── WhatsApp Image 2020-09-10 at 8.00.10 PM (1).jpeg
+│   ├── WhatsApp Image 2020-09-10 at 8.00.10 PM.jpeg
+│   ├── WhatsApp Image 2020-09-10 at 8.00.11 PM (1).jpeg
+│   ├── WhatsApp Image 2020-09-10 at 8.00.11 PM.jpeg
+│   ├── WhatsApp Image 2020-09-10 at 8.00.12 PM.jpeg
+│   ├── WhatsApp Image 2020-09-10 at 8.00.16 PM (1).jpeg
+│   ├── WhatsApp Image 2020-09-10 at 8.00.16 PM.jpeg
+│   ├── WhatsApp Image 2020-09-10 at 8.00.17 PM.jpeg
+│   ├── WhatsApp Image 2020-09-10 at 8.00.18 PM (1).jpeg
+│   ├── WhatsApp Image 2020-09-10 at 8.00.18 PM.jpeg
+│   ├── WhatsApp Image 2020-09-10 at 8.00.19 PM (1).jpeg
+│   ├── WhatsApp Image 2020-09-10 at 8.00.19 PM.jpeg
+│   ├── WhatsApp Image 2020-09-10 at 8.00.20 PM (1).jpeg
+│   ├── WhatsApp Image 2020-09-10 at 8.00.20 PM.jpeg
+│   ├── WhatsApp Image 2020-09-10 at 8.00.21 PM (1).jpeg
+│   ├── WhatsApp Image 2020-09-10 at 8.00.21 PM.jpeg
+│   ├── WhatsApp Image 2020-09-10 at 8.00.44 PM (1).jpeg
+│   ├── WhatsApp Image 2020-09-10 at 8.00.44 PM (2).jpeg
+│   ├── WhatsApp Image 2020-09-10 at 8.00.44 PM.jpeg
+│   ├── WhatsApp Image 2020-09-10 at 8.00.45 PM.jpeg
+│   ├── WhatsApp Image 2020-09-10 at 8.00.46 PM.jpeg
+│   ├── WhatsApp Image 2020-09-10 at 8.00.47 PM.jpeg
+│   ├── WhatsApp Video 2020-09-10 at 8.00.12 PM.mp4
+│   ├── WhatsApp Video 2020-09-10 at 8.00.13 PM (1).mp4
+│   ├── WhatsApp Video 2020-09-10 at 8.00.13 PM.mp4
+│   ├── WhatsApp Video 2020-09-10 at 8.00.14 PM (1).mp4
+│   ├── WhatsApp Video 2020-09-10 at 8.00.14 PM.mp4
+│   ├── WhatsApp Video 2020-09-10 at 8.00.15 PM (1).mp4
+│   ├── WhatsApp Video 2020-09-10 at 8.00.15 PM.mp4
+│   ├── WhatsApp Video 2020-09-10 at 8.00.17 PM.mp4
+│   ├── WhatsApp Video 2020-09-10 at 8.00.46 PM.mp4
+│   ├── WhatsApp Video 2020-09-10 at 8.00.47 PM.mp4
+│   └── WhatsApp Video 2020-09-10 at 8.00.48 PM.mp4
 ├── include
 │   └── common_gerobot_application
 ├── launch
 │   ├── accelerometer_control.launch
 │   ├── bringup.launch
 │   ├── camera_control.launch
+│   ├── camera_converter.launch
 │   ├── dc_motor_control.launch
 │   ├── encoder_control.launch
 │   └── hokuyo_control.launch
@@ -17,6 +58,10 @@ common_gerobot_application
 ├── package.xml
 ├── README.md
 ├── script
+│   ├── camera_apriltag_center.py
+│   ├── camera_apriltag.py
+│   ├── camera_apriltag_tracking_izwan.py
+│   ├── camera_apriltag_tracking.py
 │   ├── camera_converter.py
 │   ├── camera_preview.py
 │   ├── laser_obstacle.py
@@ -27,8 +72,9 @@ common_gerobot_application
     └── common_gerobot_application
         ├── __init__.py
         ├── makesimpleprofile.py
-        └── pid.py
-
+        ├── makesimpleprofile.pyc
+        ├── pid.py
+        └── pid.pyc
 ```
 
 # About
@@ -42,7 +88,6 @@ A project named as **"Capacity Buildingfor Caregivers and Older Persons in**
 1. imutils
 2. cv_camera
 3. rosserial
-4. common_arduino_application
 5. urg_node
 
 # How it works?
@@ -70,3 +115,41 @@ Run robot avoiding the obstacle; stop
 
 1. roslaunch common_gerobot_application hokuyo_control.launch
 2. rosrun common_gerobot_application laser_obstacle.py
+
+### camera_apriltag.py
+Detect and determine the apriltag
+
+1. roslaunch common_gerobot_application camera_control.launch
+2. rosrun common_gerobot_application camera_converter.py [re-correct the image orientation]
+3. rosrun common_gerobot_application camera_apriltag.py
+
+### camera_apriltag_center.py
+Detect and determine the apriltag, thus publish the center of apriltag
+
+1. roslaunch common_gerobot_application camera_control.launch
+2. rosrun common_gerobot_application camera_converter.py [re-correct the image orientation]
+3. rosrun common_gerobot_application camera_apriltag_center.py
+
+### camera_apriltag_tracking.py
+### camera_apriltag_tracking_izwan.py
+Detect and determine the apriltag, thus publish the center of apriltag
+
+1. roslaunch common_gerobot_application camera_control.launch
+2. rosrun common_gerobot_application camera_converter.py [re-correct the image orientation]
+3. rosrun common_gerobot_application camera_apriltag_center.py
+4. rosrun common_gerobot_application camera_apriltag_tracking.py
+
+# Notes:
+To simplify, in order to activating all the sensors and actuators on the robot, 
+we can simply execute:
+
+1. roslaunch common_gerobot_application bringup.launch
+
+which is equivalent to:
+
+1. roslaunch common_gerobot_application camera_control.launch
+2. roslaunch common_gerobot_application dc_motor_control.launch
+3. roslaunch common_gerobot_application encoder_control.launch
+4. roslaunch common_gerobot_application hokuyo_control.launch
+5. roslaunch common_gerobot_application accelerometer_control.launch
+6. roslaunch common_gerobot_application camera_converter.launch
