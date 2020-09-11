@@ -44,8 +44,8 @@ class CameraAprilTag:
 		self.panErrval = Float32()
 		self.telloCmdVel = Twist()
 
-		self.MAX_LIN_VEL = 0.04
-		self.MAX_ANG_VEL = 0.04
+		self.MAX_LIN_VEL = 0.02
+		self.MAX_ANG_VEL = 0.02
 
 		# set PID values for panning
 		self.panP = 0.5
