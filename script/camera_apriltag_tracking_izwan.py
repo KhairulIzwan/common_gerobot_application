@@ -143,7 +143,7 @@ class CameraAprilTag:
 			
 		if self.tiltOut > 0.04:
 			self.telloCmdVel.angular.z = -tiltSpeed
-		elif self.tiltOut < 0.04:
+		elif self.tiltOut < -0.04:
 			self.telloCmdVel.angular.z = tiltSpeed
 		else:
 			self.telloCmdVel.angular.z = 0
