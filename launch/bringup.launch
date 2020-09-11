@@ -7,7 +7,7 @@
 	<include file="$(find common_gerobot_application)/launch/encoder_control.launch"/>
 
 	<!-- COMMON_GEROBOT_APPLICATION {ACCELEROMETER} -->
-	<include file="$(find common_gerobot_application)/launch/accelerometer_control.launch"/>
+	<!-- <include file="$(find common_gerobot_application)/launch/accelerometer_control.launch"/> -->
 
 	<!-- COMMON_GEROBOT_APPLICATION {HOKUYO} -->
 	<include file="$(find common_gerobot_application)/launch/hokuyo_control.launch"/>
@@ -16,6 +16,6 @@
 	<include file="$(find common_gerobot_application)/launch/camera_control.launch"/>
 
 	<!-- COMMON_GEROBOT_APPLICATION {CAMERA_CONVERTER} -->
-	<!-- <include file="$(find common_gerobot_application)/launch/camera_converter.launch"/> -->
+	<include file="$(find common_gerobot_application)/launch/camera_converter.launch"/>
 
 </launch>
