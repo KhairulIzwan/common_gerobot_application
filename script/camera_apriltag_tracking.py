@@ -83,7 +83,7 @@ class CameraAprilTag:
 #						self.cbImage
 #						)
 
-		# Subscribe to CompressedImage msg
+		# Subscribe to CameraInfo msg
 		self.telloCameraInfo_topic = "/tello/camera/camera_info"
 		self.telloCameraInfo_sub = rospy.Subscriber(
 						self.telloCameraInfo_topic, 
