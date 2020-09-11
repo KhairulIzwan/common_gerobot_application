@@ -53,7 +53,7 @@ class CameraAprilTag:
 		self.panD = 0
 
 		# set PID values for tilting
-		self.tiltP = 0.001
+		self.tiltP = 0.01
 		self.tiltI = 0
 		self.tiltD = 1.5
 
