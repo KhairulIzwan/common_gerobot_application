@@ -2,7 +2,7 @@
 
 	<!-- A simple launch file for the urg_node package. -->
 
-	<node 	name="urg_node_robot1" 
+	<node 	name="urg_node_robot" 
 		pkg="urg_node" 
 		type="urg_node" 
 		output="screen">

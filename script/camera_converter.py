@@ -186,6 +186,9 @@ if __name__ == '__main__':
 	rospy.init_node('camera_converter', anonymous=False)
 	camera = CameraConverter()
 
+	r = rospy.Rate(10)
+
 	# Camera preview
 	while not rospy.is_shutdown():
 		camera.cbPreview()
+		r.sleep()
