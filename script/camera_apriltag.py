@@ -187,7 +187,7 @@ class CameraAprilTag:
 	# Show the output frame
 	def cbShowImage(self):
 
-		self.cv_image = imutils.rotate_bound(self.cv_image, 90)
+#		self.cv_image = imutils.rotate_bound(self.cv_image, 90)
 
 		# comment if the image is mirrored
 #		self.cv_image = cv2.flip(self.cv_image, 1)
@@ -217,9 +217,9 @@ if __name__ == '__main__':
 	rospy.init_node('camera_apriltag', anonymous=False)
 	camera = CameraAprilTag()
 	
-	r = rospy.Rate(10)
+#	r = rospy.Rate(10)
 	
 	# Camera preview
 	while not rospy.is_shutdown():
 		camera.cbPreview()
-		r.sleep()
+#		r.sleep()
