@@ -33,7 +33,7 @@ class CameraAprilTag:
 		self.bridge = CvBridge()
 		self.image_received = False
 		self.detector = apriltag.Detector()
-		self.
+		self.apriltag_detection_status = Bool()
 
 		rospy.logwarn("AprilTag Detection Node [ONLINE]...")
 
@@ -47,7 +47,15 @@ class CameraAprilTag:
 					Image, 
 					self.cbImage
 					)
-					
+
+		# Publish to Bool msg
+		self.apriltag_topic = "/apriltag_detection_status"
+		self.apriltag_pub = rospy.Publisher(
+					self.apriltag_topic, 
+					Bool, 
+					queue_size=10
+					)
+
 		# Allow up to one second to connection
 		rospy.sleep(1)
 
@@ -134,6 +142,9 @@ class CameraAprilTag:
 		result = self.detector.detect(cv_image_gray)
 
 		if len(result) != 0:
+			self.apriltag_detection_status.data = True
+			self.apriltag_pub.publish(self.apriltag_detection_status)
+			
 			for i in range(len(result)):
 #				rospy.loginfo("Detect ID: %d" % (result[i][1]))
 
@@ -183,7 +194,8 @@ class CameraAprilTag:
 					(255, 0, 0), 
 					2)
 		else:
-			pass
+			self.apriltag_detection_status.data = False
+			self.apriltag_pub.publish(self.apriltag_detection_status)
 
 	# Show the output frame
 	def cbShowImage(self):
@@ -218,9 +230,9 @@ if __name__ == '__main__':
 	rospy.init_node('camera_apriltag', anonymous=False)
 	camera = CameraAprilTag()
 	
-#	r = rospy.Rate(10)
+	r = rospy.Rate(10)
 	
 	# Camera preview
 	while not rospy.is_shutdown():
 		camera.cbPreview()
-#		r.sleep()
+		r.sleep()

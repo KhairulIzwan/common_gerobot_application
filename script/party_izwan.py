@@ -19,7 +19,7 @@ import random
 import apriltag
 
 # import the necessary ROS packages
-from std_msgs.msg import String, Int64
+from std_msgs.msg import String, Int64, Bool
 #from sensor_msgs.msg import Image
 #from sensor_msgs.msg import CameraInfo
 
@@ -42,6 +42,7 @@ class Party:
 #		self.image_received = False
 		self.encLeft_received = False
 		self.encRight_received = False
+		self.apriltag_received = False
 
 		self.partyTwist = Twist()
 
@@ -64,6 +65,14 @@ class Party:
 					self.encRight_topic, 
 					Int64, 
 					self.cbEncoderRight
+					)
+
+		# Subscribe to Bool msg
+		self.apriltag_topic = "/apriltag_detection_status"
+		self.apriltag_sub = rospy.Subscriber(
+					self.apriltag_topic, 
+					Bool, 
+					self.cbAprilTagDetection
 					)
 
 		# Publish to Twist msg
@@ -103,41 +112,53 @@ class Party:
 		if self.val_encRight is not None:
 			self.encRight_received = True
 		else:
-			self.encRight_received = False		
+			self.encRight_received = False	
+
+	# Get AprilTagDetection reading
+	def cbAprilTagDetection(self, msg):
+
+		try:
+			self.apriltag_detection_status = msg.data
+
+		except KeyboardInterrupt as e:
+			print(e)
+
+		if self.apriltag_detection_status is not None:
+			self.apriltag_received = True
+		else:
+			self.apriltag_received = False		
 
 	# Main
 	def cbParty(self):
 
-		if self.encLeft_received and self.encRight_received:
-#			rospy.loginfo("EncoderLeft: %d\tEncoderRight: %d" % (self.val_encLeft, self.val_encRight))
+#	if self.encLeft_received and self.encRight_received:
+#		rospy.loginfo("EncoderLeft: %d\tEncoderRight: %d" % (self.val_encLeft, self.val_encRight))
 
-			if self.val_encLeft <= 1000:
-				self.partyTwist.linear.x = 0.0
-				self.partyTwist.linear.y = 0.0
-				self.partyTwist.linear.z = 0.0
+		if self.val_encLeft <= 1000 or self.apriltag_detection_status == False:
+			self.partyTwist.linear.x = 0.0
+			self.partyTwist.linear.y = 0.0
+			self.partyTwist.linear.z = 0.0
 
-				self.partyTwist.angular.x = 0.0
-				self.partyTwist.angular.y = 0.0
-				self.partyTwist.angular.z = -0.02
-				
-				self.partyTwist_pub.publish(self.partyTwist)
-				
-				rospy.logwarn("TURN!")
-			else:
-				self.partyTwist.linear.x = 0.0
-				self.partyTwist.linear.y = 0.0
-				self.partyTwist.linear.z = 0.0
-
-				self.partyTwist.angular.x = 0.0
-				self.partyTwist.angular.y = 0.0
-				self.partyTwist.angular.z = 0.0
-				
-				self.partyTwist_pub.publish(self.partyTwist)
-				
-				rospy.logwarn("STOP!")
-
+			self.partyTwist.angular.x = 0.0
+			self.partyTwist.angular.y = 0.0
+			self.partyTwist.angular.z = -0.02
+			
+			self.partyTwist_pub.publish(self.partyTwist)
+			
+			rospy.logwarn("TURN!")
 		else:
-			rospy.logerr("No Encoder Reading")
+			self.partyTwist.linear.x = 0.0
+			self.partyTwist.linear.y = 0.0
+			self.partyTwist.linear.z = 0.0
+
+			self.partyTwist.angular.x = 0.0
+			self.partyTwist.angular.y = 0.0
+			self.partyTwist.angular.z = 0.0
+			
+			self.partyTwist_pub.publish(self.partyTwist)
+			
+			rospy.logwarn("STOP!")
+
 		
 	# rospy shutdown callback
 	def cbShutdown(self):
