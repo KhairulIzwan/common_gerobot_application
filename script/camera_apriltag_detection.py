@@ -63,14 +63,6 @@ class CameraAprilTag:
 	def cbImage(self, msg):
 
 		try:
-#			# direct conversion to CV2
-#			np_arr = np.fromstring(msg.data, np.uint8)
-#			self.cv_image = cv2.imdecode(np_arr, cv2.IMREAD_COLOR) # OpenCV >= 3.0:
-##			self.image = imutils.rotate_bound(self.image, 90)
-
-#			# comment if the image is mirrored
-##			self.image = cv2.flip(self.image, 1)
-
 			self.cv_image = self.bridge.imgmsg_to_cv2(msg, "bgr8")
 
 		except CvBridgeError as e:
@@ -82,7 +74,7 @@ class CameraAprilTag:
 
 		else:
 			self.image_received = False
-		
+
 	# Image information callback
 	def cbInfo(self):
 
@@ -146,8 +138,6 @@ class CameraAprilTag:
 			self.apriltag_pub.publish(self.apriltag_detection_status)
 			
 			for i in range(len(result)):
-#				rospy.loginfo("Detect ID: %d" % (result[i][1]))
-
 				cv2.putText(
 					self.cv_image, 
 					"ID: %d" % (result[i][1]), 
@@ -199,11 +189,6 @@ class CameraAprilTag:
 
 	# Show the output frame
 	def cbShowImage(self):
-
-#		self.cv_image = imutils.rotate_bound(self.cv_image, 90)
-
-		# comment if the image is mirrored
-#		self.cv_image = cv2.flip(self.cv_image, 1)
 
 		cv2.imshow("AprilTag Detection", self.cv_image)
 		cv2.waitKey(1)
