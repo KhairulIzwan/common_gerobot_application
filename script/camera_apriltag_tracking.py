@@ -153,7 +153,7 @@ class CameraAprilTag:
 		self.panErr, self.panOut = self.cbPIDprocess(self.panPID, self.objectCoordX, self.imgWidth // 2)
 		self.tiltErr, self.tiltOut = self.cbPIDprocess(self.tiltPID, self.objectCoordY, self.imgHeight // 2)
 		
-		rospy.loginfo([self.tiltErr, self.tiltOut])
+#		rospy.loginfo([self.tiltErr, self.tiltOut])
 
 #		self.panErrval.data = self.panOut
 #		self.panErr_pub.publish(self.panErrval)
@@ -185,12 +185,25 @@ class CameraAprilTag:
 #			self.telloCmdVel.linear.x = 0
 			
 		if self.tiltErr > 10:
+#			self.telloCmdVel.linear.x = 0.0
+#			self.telloCmdVel.linear.y = 0.0
+#			self.telloCmdVel.linear.z = 0.0
+
+#			self.telloCmdVel.angular.x = 0.0
+#			self.telloCmdVel.angular.y = 0.0
 			self.telloCmdVel.angular.z = -tiltSpeed
+
 		elif self.tiltErr < -10:
+#			self.telloCmdVel.linear.x = 0.0
+#			self.telloCmdVel.linear.y = 0.0
+#			self.telloCmdVel.linear.z = 0.0
+
+#			self.telloCmdVel.angular.x = 0.0
+#			self.telloCmdVel.angular.y = 0.0
 			self.telloCmdVel.angular.z = tiltSpeed
 		else:
 			self.telloCmdVel.angular.z = 0.0
-
+			
 		self.telloCmdVel.linear.x = 0.0
 		self.telloCmdVel.linear.y = 0.0
 		self.telloCmdVel.linear.z = 0.0
@@ -198,6 +211,7 @@ class CameraAprilTag:
 		self.telloCmdVel.angular.x = 0.0
 		self.telloCmdVel.angular.y = 0.0
 #		self.telloCmdVel.angular.z = 0.0
+
 		self.telloCmdVel_pub.publish(self.telloCmdVel)
 
 	def constrain(self, input, low, high):
@@ -215,6 +229,16 @@ class CameraAprilTag:
 
 		rospy.logerr("AprilTag Tracking Node [OFFLINE]...")
 #		cv2.destroyAllWindows()
+
+		self.telloCmdVel.linear.x = 0.0
+		self.telloCmdVel.linear.y = 0.0
+		self.telloCmdVel.linear.z = 0.0
+
+		self.telloCmdVel.angular.x = 0.0
+		self.telloCmdVel.angular.y = 0.0
+		self.telloCmdVel.angular.z = 0.0
+
+		self.telloCmdVel_pub.publish(self.telloCmdVel)
 
 if __name__ == '__main__':
 
