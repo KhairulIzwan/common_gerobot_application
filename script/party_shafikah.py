@@ -19,7 +19,7 @@ import random
 import apriltag
 
 # import the necessary ROS packages
-from std_msgs.msg import String, Int64
+from std_msgs.msg import String, Int64, Float32
 from sensor_msgs.msg import Image, CameraInfo, CompressedImage
 from sensor_msgs.msg import LaserScan
 
@@ -195,10 +195,10 @@ class CameraAprilTag:
 		else:
 			self.encLeft_received = False
 	
-	def cbParty(self) :
-		if self.encLeft_received and encRight_received :
-		
-			if self.val_encLeft <= 1000 :
+#	def cbParty(self) :
+#		if self.encLeft_received and encRight_received :
+#		
+#			if self.val_encLeft <= 1000 :
 			
 			
 	
@@ -236,21 +236,21 @@ class CameraAprilTag:
 		
 			
 			if center > 1.0 and elf.tiltOut > 0.04:
-				self.telloCmdVel.angular.z = -tiltSpeed
+				self.partyTwist.angular.z = -tiltSpeed
 			elif center < 1.0 and self.tiltOut < -0.04:
-				self.telloCmdVel.angular.z = tiltSpeed
+				self.partyTwist.angular.z = tiltSpeed
 			else:
-				self.telloCmdVel.angular.z = 0
+				self.partyTwist.angular.z = 0
 		
 		
-			self.telloCmdVel.linear.x = 0.0
-			self.telloCmdVel.linear.y = 0.0
-			self.telloCmdVel.linear.z = 0.0
+			self.partyTwist.linear.x = 0.0
+			self.partyTwist.linear.y = 0.0
+			self.partyTwist.linear.z = 0.0
 		
-			self.telloCmdVel.angular.x = 0.0
-			self.telloCmdVel.angular.y = 0.0
+			self.partyTwist.angular.x = 0.0
+			self.partyTwist.angular.y = 0.0
 			
-			self.telloCmdVel_pub.publish(self.telloCmdVel)
+			self.partyTwist_pub.publish(self.partyTwist)
 				
 		else : 
 			rospy.logerr("No Info Received!")
