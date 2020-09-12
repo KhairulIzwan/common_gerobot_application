@@ -45,7 +45,7 @@ class CameraAprilTag:
 		self.image_received = False
 
 		self.MAX_LIN_VEL = 0.005
-		self.MAX_ANG_VEL = 0.005
+		self.MAX_ANG_VEL = 0.03
 
 		# set PID values for panning
 		self.panP = 0.5
@@ -142,9 +142,9 @@ class CameraAprilTag:
 #			self.telloCmdVel.linear.x = 0
 			
 		if self.tiltOut > 0.04:
-			self.telloCmdVel.angular.z = -tiltSpeed
+			self.telloCmdVel.angular.z = -panSpeed
 		elif self.tiltOut < -0.04:
-			self.telloCmdVel.angular.z = tiltSpeed
+			self.telloCmdVel.angular.z = panSpeed
 		else:
 			self.telloCmdVel.angular.z = 0
 

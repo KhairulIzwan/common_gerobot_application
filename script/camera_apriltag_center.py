@@ -209,17 +209,17 @@ class CameraAprilTag:
 	def cbShowImage(self):
 
 
-		self.cv_image = imutils.rotate_bound(self.cv_image, 90)
+#		self.cv_image = imutils.rotate_bound(self.cv_image, 90)
 
 		# comment if the image is mirrored
 #		self.cv_image = cv2.flip(self.cv_image, 1)
 
-		self.cv_image_clone = imutils.resize(
-					self.cv_image.copy(), 
-					width=160
-					)
+#		self.cv_image_clone = imutils.resize(
+#					self.cv_image.copy(), 
+#					width=160
+#					)
 
-		cv2.imshow("AprilTag Center", self.cv_image_clone)
+		cv2.imshow("AprilTag Center", self.cv_image)
 		cv2.waitKey(1)
 
 	# Preview image + info
