@@ -4,7 +4,7 @@
 	<node	pkg="common_gerobot_application" 
 		name="teleop_key" 
 		type="teleop_key.py"> 
-		<!-- output="screen"> -->
+		output="screen">
 	</node>
 	
 </launch>

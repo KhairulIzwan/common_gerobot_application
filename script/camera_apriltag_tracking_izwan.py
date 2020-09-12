@@ -38,11 +38,11 @@ class CameraAprilTag:
 	def __init__(self):
 
 		self.bridge = CvBridge()
-		self.image_received = False
 		self.detector = apriltag.Detector()
 		self.objectCoord = objCoord()
-		self.panErrval = Float32()
 		self.telloCmdVel = Twist()
+
+		self.image_received = False
 
 		self.MAX_LIN_VEL = 0.005
 		self.MAX_ANG_VEL = 0.005
@@ -170,9 +170,9 @@ if __name__ == '__main__':
 	rospy.init_node('camera_apriltag_tracking', anonymous=False)
 	camera = CameraAprilTag()
 	
-	r = rospy.Rate(10)
+#	r = rospy.Rate(10)
 	
 	# Camera preview
 	while not rospy.is_shutdown():
 		camera.cbCallErr()
-		r.sleep()
+#		r.sleep()
