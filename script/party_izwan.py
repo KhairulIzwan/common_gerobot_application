@@ -42,7 +42,11 @@ class Party:
 #		self.image_received = False
 		self.encLeft_received = False
 		self.encRight_received = False
-		self.apriltag_received = False
+		self.apriltagStatus_received = False
+		self.apriltagID_received = False
+
+		self.taskONE = False
+		self.taskTWO = False
 
 		self.partyTwist = Twist()
 
@@ -68,13 +72,21 @@ class Party:
 					)
 
 		# Subscribe to Bool msg
-		self.apriltag_topic = "/apriltag_detection_status"
-		self.apriltag_sub = rospy.Subscriber(
-					self.apriltag_topic, 
+		self.apriltagStatus_topic = "/apriltag_detection_status"
+		self.apriltagStatus_sub = rospy.Subscriber(
+					self.apriltagStatus_topic, 
 					Bool, 
-					self.cbAprilTagDetection
+					self.cbAprilTagDetectionStatus
 					)
 
+		# Subscribe to Int64 msg
+		self.apriltagID_topic = "/apriltag_detection_ID"
+		self.apriltagID_sub = rospy.Subscriber(
+					self.apriltagID_topic, 
+					Int64, 
+					self.cbAprilTagDetectionID
+					)
+					
 		# Publish to Twist msg
 		self.partyTwist_topic = "/cmd_vel"
 		self.partyTwist_pub = rospy.Publisher(
@@ -114,8 +126,8 @@ class Party:
 		else:
 			self.encRight_received = False	
 
-	# Get AprilTagDetection reading
-	def cbAprilTagDetection(self, msg):
+	# Get AprilTagDetectionStatus reading
+	def cbAprilTagDetectionStatus(self, msg):
 
 		try:
 			self.apriltag_detection_status = msg.data
@@ -124,40 +136,57 @@ class Party:
 			print(e)
 
 		if self.apriltag_detection_status is not None:
-			self.apriltag_received = True
+			self.apriltagStatus_received = True
 		else:
-			self.apriltag_received = False		
+			self.apriltagStatus_received = False	
+
+	# Get AprilTagDetectionID reading
+	def cbAprilTagDetectionID(self, msg):
+
+		try:
+			self.apriltag_detection_ID = msg.data
+
+		except KeyboardInterrupt as e:
+			print(e)
+
+		if self.apriltag_detection_ID is not None:
+			self.apriltagID_received = True
+		else:
+			self.apriltagID_received = False		
 
 	# Main
 	def cbParty(self):
 
-#	if self.encLeft_received and self.encRight_received:
-#		rospy.loginfo("EncoderLeft: %d\tEncoderRight: %d" % (self.val_encLeft, self.val_encRight))
+		if self.apriltag_detection_ID == 0:
+			if self.val_encLeft <= 1000 and self.taskONE == True:
+				if self.apriltag_detection_status == True:
+					self.taskONE = False
+				else:
+					self.partyTwist.linear.x = 0.0
+					self.partyTwist.linear.y = 0.0
+					self.partyTwist.linear.z = 0.0
 
-		if self.val_encLeft <= 1000 or self.apriltag_detection_status == False:
-			self.partyTwist.linear.x = 0.0
-			self.partyTwist.linear.y = 0.0
-			self.partyTwist.linear.z = 0.0
+					self.partyTwist.angular.x = 0.0
+					self.partyTwist.angular.y = 0.0
+					self.partyTwist.angular.z = -0.02
+			
+					self.partyTwist_pub.publish(self.partyTwist)
+			
+					rospy.logwarn("TURN!")
+			else:
+				self.partyTwist.linear.x = 0.0
+				self.partyTwist.linear.y = 0.0
+				self.partyTwist.linear.z = 0.0
 
-			self.partyTwist.angular.x = 0.0
-			self.partyTwist.angular.y = 0.0
-			self.partyTwist.angular.z = -0.02
+				self.partyTwist.angular.x = 0.0
+				self.partyTwist.angular.y = 0.0
+				self.partyTwist.angular.z = 0.0
 			
-			self.partyTwist_pub.publish(self.partyTwist)
+				self.partyTwist_pub.publish(self.partyTwist)
 			
-			rospy.logwarn("TURN!")
+				rospy.logwarn("STOP!")
 		else:
-			self.partyTwist.linear.x = 0.0
-			self.partyTwist.linear.y = 0.0
-			self.partyTwist.linear.z = 0.0
-
-			self.partyTwist.angular.x = 0.0
-			self.partyTwist.angular.y = 0.0
-			self.partyTwist.angular.z = 0.0
-			
-			self.partyTwist_pub.publish(self.partyTwist)
-			
-			rospy.logwarn("STOP!")
+			pass
 
 		
 	# rospy shutdown callback

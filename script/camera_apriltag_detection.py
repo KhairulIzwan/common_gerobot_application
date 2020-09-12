@@ -19,7 +19,7 @@ import random
 import apriltag
 
 # import the necessary ROS packages
-from std_msgs.msg import String, Bool
+from std_msgs.msg import String, Bool, Int64
 from sensor_msgs.msg import Image
 
 from cv_bridge import CvBridge
@@ -34,6 +34,7 @@ class CameraAprilTag:
 		self.image_received = False
 		self.detector = apriltag.Detector()
 		self.apriltag_detection_status = Bool()
+		self.apriltagID = Int64()
 
 		rospy.logwarn("AprilTag Detection Node [ONLINE]...")
 
@@ -49,10 +50,18 @@ class CameraAprilTag:
 					)
 
 		# Publish to Bool msg
-		self.apriltag_topic = "/apriltag_detection_status"
-		self.apriltag_pub = rospy.Publisher(
-					self.apriltag_topic, 
+		self.apriltagStatus_topic = "/apriltag_detection_status"
+		self.apriltagStatus_pub = rospy.Publisher(
+					self.apriltagStatus_topic, 
 					Bool, 
+					queue_size=10
+					)
+
+		# Publish to Int64 msg
+		self.apriltagID_topic = "/apriltag_detection_ID"
+		self.apriltagID_pub = rospy.Publisher(
+					self.apriltagID_topic, 
+					Int64, 
 					queue_size=10
 					)
 
@@ -135,9 +144,13 @@ class CameraAprilTag:
 
 		if len(result) != 0:
 			self.apriltag_detection_status.data = True
-			self.apriltag_pub.publish(self.apriltag_detection_status)
+			self.apriltagStatus_pub.publish(self.apriltag_detection_status)
 			
 			for i in range(len(result)):
+			
+				self.apriltagID.data = result[i][1]
+				self.apriltagID_pub.publish(self.apriltagID)
+				
 				cv2.putText(
 					self.cv_image, 
 					"ID: %d" % (result[i][1]), 
@@ -185,7 +198,7 @@ class CameraAprilTag:
 					2)
 		else:
 			self.apriltag_detection_status.data = False
-			self.apriltag_pub.publish(self.apriltag_detection_status)
+			self.apriltagStatus_pub.publish(self.apriltag_detection_status)
 
 	# Show the output frame
 	def cbShowImage(self):
