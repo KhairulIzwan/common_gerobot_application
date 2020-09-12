@@ -158,21 +158,11 @@ class Party:
 	def cbParty(self):
 
 		if self.apriltag_detection_ID == 0:
-			if self.val_encLeft <= 1000 and self.taskONE == True:
-				if self.apriltag_detection_status == True:
-					self.taskONE = False
-				else:
-					self.partyTwist.linear.x = 0.0
-					self.partyTwist.linear.y = 0.0
-					self.partyTwist.linear.z = 0.0
+			self.taskONE = True
 
-					self.partyTwist.angular.x = 0.0
-					self.partyTwist.angular.y = 0.0
-					self.partyTwist.angular.z = -0.02
-			
-					self.partyTwist_pub.publish(self.partyTwist)
-			
-					rospy.logwarn("TURN!")
+		if self.val_encLeft <= 1000 and self.taskONE == True:
+			if self.apriltag_detection_status == True and self.apriltag_detection_ID != 0:
+				self.taskONE = False
 			else:
 				self.partyTwist.linear.x = 0.0
 				self.partyTwist.linear.y = 0.0
@@ -180,15 +170,24 @@ class Party:
 
 				self.partyTwist.angular.x = 0.0
 				self.partyTwist.angular.y = 0.0
-				self.partyTwist.angular.z = 0.0
-			
-				self.partyTwist_pub.publish(self.partyTwist)
-			
-				rospy.logwarn("STOP!")
-		else:
-			pass
-
+				self.partyTwist.angular.z = -0.02
 		
+				self.partyTwist_pub.publish(self.partyTwist)
+		
+				rospy.logwarn("TURN!")
+		else:
+			self.partyTwist.linear.x = 0.0
+			self.partyTwist.linear.y = 0.0
+			self.partyTwist.linear.z = 0.0
+
+			self.partyTwist.angular.x = 0.0
+			self.partyTwist.angular.y = 0.0
+			self.partyTwist.angular.z = 0.0
+		
+			self.partyTwist_pub.publish(self.partyTwist)
+		
+			rospy.logwarn("STOP!")
+
 	# rospy shutdown callback
 	def cbShutdown(self):
 

@@ -200,6 +200,9 @@ class CameraAprilTag:
 			self.apriltag_detection_status.data = False
 			self.apriltagStatus_pub.publish(self.apriltag_detection_status)
 
+			self.apriltagID.data = 100
+			self.apriltagID_pub.publish(self.apriltagID)
+
 	# Show the output frame
 	def cbShowImage(self):
 
