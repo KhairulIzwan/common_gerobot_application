@@ -19,8 +19,7 @@ import random
 import apriltag
 
 # import the necessary ROS packages
-from std_msgs.msg import String, Float32
-from std_msgs.msg import Integer
+from std_msgs.msg import String, Int64
 from sensor_msgs.msg import Image, CameraInfo, CompressedImage
 from sensor_msgs.msg import LaserScan
 
@@ -43,9 +42,13 @@ class CameraAprilTag:
 		self.detector = apriltag.Detector()
 		self.objectCoord = objCoord()
 		self.panErrval = Float32()
-		self.telloCmdVel = Twist()
+		self.partyTwist = Twist()
 		
 		self.laser_received = False
+		self.encLeft_received = False
+		self.encRight_received = False
+		
+		
 
 
 		self.MAX_LIN_VEL = 0.005
@@ -93,17 +96,17 @@ class CameraAprilTag:
 		self.laser_sub = rospy.Subscriber(self.laser_topic, LaserScan, self.cbLaser)
 		
 		#Subscribe to Right Encoder
-		self.enc_right_topic = "/encoder_control/val_encRight"
-		self.enc_right_sub = rospy.Subscriber(self.enc_right_topic, RightEnc, self.cbRightEnc)
+		self.encRight_topic = "/val_encRight"
+		self.encRight_sub = rospy.Subscriber(self.encRight_topic, Int64, self.cbRightEnc)
 		
 		#Subscribe to Left Encoder
-		self.encleft_topic = "/encoder_control/val_encLeft"
-		self.enc_left_sub = rospy.Subscriber(self.enc_left_topic, RightEnc, self.cbLeftEnc)
+		self.encleft_topic = "/val_encLeft"
+		self.enc_left_sub = rospy.Subscriber(self.encLeft_topic, Int64, self.cbLeftEnc)
 		
 		# Publish to Twist msg
-		self.telloCmdVel_topic = "/cmd_vel"
-		self.telloCmdVel_pub = rospy.Publisher(
-					self.telloCmdVel_topic, 
+		self.partyTwist_topic = "/cmd_vel"
+		self.partyTwist_pub = rospy.Publisher(
+					self.partyTwist_topic_topic, 
 					Twist, 
 					queue_size=10
 					)
@@ -167,6 +170,38 @@ class CameraAprilTag:
 				scan_filter[i] = 0
 				
 		return scan_filter
+		
+	def cbRightEnc(self,msg) :
+	
+		try :
+			self.val_encRight = msg.data
+		except KeyboardInterrupt as e :
+			print(e)
+			
+		if self.val_encRight is not None :
+			self.encRight_received = True 
+		else:
+			self.encRight_received = False
+			
+	def cbLeftEnc(self,msg) :
+	
+		try :
+			self.val_encLeft = msg.data
+		except KeyboardInterrupt as e :
+			print(e)
+			
+		if self.val_encLeft is not None :
+			self.encLeft_received = True 
+		else:
+			self.encLeft_received = False
+	
+	def cbParty(self) :
+		if self.encLeft_received and encRight_received :
+		
+			if self.val_encLeft <= 1000 :
+			
+			
+	
 
 	def cbAprilTag(self):
 		Self.cbPIDerr()
