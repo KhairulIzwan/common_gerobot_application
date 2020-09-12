@@ -45,8 +45,8 @@ class CameraAprilTag:
 		self.partyTwist = Twist()
 		
 		self.laser_received = False
-		self.encLeft_received = False
-		self.encRight_received = False
+#		self.encLeft_received = False
+#		self.encRight_received = False
 		
 		
 
@@ -95,18 +95,18 @@ class CameraAprilTag:
 		self.laser_topic ="/scan"
 		self.laser_sub = rospy.Subscriber(self.laser_topic, LaserScan, self.cbLaser)
 		
-		#Subscribe to Right Encoder
-		self.encRight_topic = "/val_encRight"
-		self.encRight_sub = rospy.Subscriber(self.encRight_topic, Int64, self.cbRightEnc)
-		
-		#Subscribe to Left Encoder
-		self.encleft_topic = "/val_encLeft"
-		self.enc_left_sub = rospy.Subscriber(self.encLeft_topic, Int64, self.cbLeftEnc)
+#		#Subscribe to Right Encoder
+#		self.encRight_topic = "/val_encRight"
+#		self.encRight_sub = rospy.Subscriber(self.encRight_topic, Int64, self.cbRightEnc)
+#		
+#		#Subscribe to Left Encoder
+#		self.encleft_topic = "/val_encLeft"
+#		self.enc_left_sub = rospy.Subscriber(self.encLeft_topic, Int64, self.cbLeftEnc)
 		
 		# Publish to Twist msg
 		self.partyTwist_topic = "/cmd_vel"
 		self.partyTwist_pub = rospy.Publisher(
-					self.partyTwist_topic_topic, 
+					self.partyTwist_topic, 
 					Twist, 
 					queue_size=10
 					)
@@ -171,29 +171,29 @@ class CameraAprilTag:
 				
 		return scan_filter
 		
-	def cbRightEnc(self,msg) :
-	
-		try :
-			self.val_encRight = msg.data
-		except KeyboardInterrupt as e :
-			print(e)
-			
-		if self.val_encRight is not None :
-			self.encRight_received = True 
-		else:
-			self.encRight_received = False
-			
-	def cbLeftEnc(self,msg) :
-	
-		try :
-			self.val_encLeft = msg.data
-		except KeyboardInterrupt as e :
-			print(e)
-			
-		if self.val_encLeft is not None :
-			self.encLeft_received = True 
-		else:
-			self.encLeft_received = False
+#	def cbRightEnc(self,msg) :
+#	
+#		try :
+#			self.val_encRight = msg.data
+#		except KeyboardInterrupt as e :
+#			print(e)
+#			
+#		if self.val_encRight is not None :
+#			self.encRight_received = True 
+#		else:
+#			self.encRight_received = False
+#			
+#	def cbLeftEnc(self,msg) :
+#	
+#		try :
+#			self.val_encLeft = msg.data
+#		except KeyboardInterrupt as e :
+#			print(e)
+#			
+#		if self.val_encLeft is not None :
+#			self.encLeft_received = True 
+#		else:
+#			self.encLeft_received = False
 	
 #	def cbParty(self) :
 #		if self.encLeft_received and encRight_received :
