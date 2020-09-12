@@ -33,6 +33,7 @@ class CameraAprilTag:
 		self.bridge = CvBridge()
 		self.image_received = False
 		self.detector = apriltag.Detector()
+		self.
 
 		rospy.logwarn("AprilTag Detection Node [ONLINE]...")
 
