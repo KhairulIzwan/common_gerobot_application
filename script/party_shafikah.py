@@ -1,9 +1,9 @@
 #!/usr/bin/env python
 
 ################################################################################
-## {Description}: 
+## {Description}: Read a Laserscan
 ################################################################################
-## Author: Nurshafikah Binti Darwis
+## Author: Khairul Izwan Bin Kamsani
 ## Version: {1}.{0}.{0}
 ## Email: {wansnap@gmail.com}
 ################################################################################
@@ -19,37 +19,44 @@ import random
 import apriltag
 
 # import the necessary ROS packages
-from std_msgs.msg import String, Int64, Float32
-from sensor_msgs.msg import Image, CameraInfo, CompressedImage
-from sensor_msgs.msg import LaserScan
+from std_msgs.msg import String, Int64, Bool
+#from sensor_msgs.msg import Image
+from sensor_msgs.msg import CameraInfo
 
-from cv_bridge import CvBridge
-from cv_bridge import CvBridgeError
+#from cv_bridge import CvBridge
+#from cv_bridge import CvBridgeError
+
+#import math
+from sensor_msgs.msg import LaserScan
+from geometry_msgs.msg import Twist
+
+import numpy as np
+import math
+
+import rospy
 
 from common_gerobot_application.msg import objCenter as objCoord
 
 from common_gerobot_application.pid import PID
 from common_gerobot_application.makesimpleprofile import map as mapped
 
-from geometry_msgs.msg import Twist
-import rospy
-
-class CameraAprilTag:
+class Party:
 	def __init__(self):
 
-		self.bridge = CvBridge()
-		self.image_received = False
-		self.detector = apriltag.Detector()
-		self.objCoord = objCoord()
-		self.panErrval = Float32()
-		self.partyTwist = Twist()
+#		self.bridge = CvBridge()
+#		self.image_received = False
+		self.encLeft_received = False
+		self.encRight_received = False
+		self.apriltagStatus_received = False
+		self.apriltagID_received = False
 		
-		self.laser_received = False
-#		self.encLeft_received = False
-#		self.encRight_received = False
+		self.apriltag_detection_ID = None
 
-		self.MAX_LIN_VEL = 0.005
-		self.MAX_ANG_VEL = 0.005
+		self.taskONE = False
+		self.taskTWO = False
+
+		self.MAX_LIN_VEL = 0.02
+		self.MAX_ANG_VEL = 0.03
 
 		# set PID values for panning
 		self.panP = 0.5
@@ -57,9 +64,9 @@ class CameraAprilTag:
 		self.panD = 0
 
 		# set PID values for tilting
-		self.tiltP = 1
+		self.tiltP = 0.5
 		self.tiltI = 0
-		self.tiltD = 0
+		self.tiltD = 0.5
 
 		# create a PID and initialize it
 		self.panPID = PID(self.panP, self.panI, self.panD)
@@ -67,19 +74,45 @@ class CameraAprilTag:
 
 		self.panPID.initialize()
 		self.tiltPID.initialize()
+		
+		self.partyTwist = Twist()
 
-		rospy.logwarn("AprilTag Tracking Node [ONLINE]...")
+		rospy.logwarn("Party Node [ONLINE]...")
 
 		# rospy shutdown
 		rospy.on_shutdown(self.cbShutdown)
+			
+		# Subscribe to Int64 msg
+		self.encLeft_topic = "/val_encLeft"
+		self.encLeft_sub = rospy.Subscriber(
+					self.encLeft_topic, 
+					Int64, 
+					self.cbEncoderLeft
+					)
 
-		# Subscribe to CompressedImage msg
-		self.cameraInfo_topic = "/cv_camera/camera_info_converted"
-		self.cameraInfo_sub = rospy.Subscriber(
-						self.cameraInfo_topic, 
-						CameraInfo, 
-						self.cbCameraInfo
-						)
+		# Subscribe to Int64 msg
+		self.encRight_topic = "/val_encRight"
+		self.encRight_sub = rospy.Subscriber(
+					self.encRight_topic, 
+					Int64, 
+					self.cbEncoderRight
+					)
+
+		# Subscribe to Bool msg
+		self.apriltagStatus_topic = "/apriltag_detection_status"
+		self.apriltagStatus_sub = rospy.Subscriber(
+					self.apriltagStatus_topic, 
+					Bool, 
+					self.cbAprilTagDetectionStatus
+					)
+
+		# Subscribe to Int64 msg
+		self.apriltagID_topic = "/apriltag_detection_ID"
+		self.apriltagID_sub = rospy.Subscriber(
+					self.apriltagID_topic, 
+					Int64, 
+					self.cbAprilTagDetectionID
+					)
 
 		# Subscribe to objCenter msg
 		self.objCoord_topic = "/objCoord"
@@ -88,18 +121,15 @@ class CameraAprilTag:
 					objCoord, 
 					self.cbObjCoord
 					)
-		# Subscribe to LaserScan msg
-		self.laser_topic ="/scan"
-		self.laser_sub = rospy.Subscriber(self.laser_topic, LaserScan, self.cbLaser)
-		
-#		#Subscribe to Right Encoder
-#		self.encRight_topic = "/val_encRight"
-#		self.encRight_sub = rospy.Subscriber(self.encRight_topic, Int64, self.cbRightEnc)
-#		
-#		#Subscribe to Left Encoder
-#		self.encleft_topic = "/val_encLeft"
-#		self.enc_left_sub = rospy.Subscriber(self.encLeft_topic, Int64, self.cbLeftEnc)
-		
+
+		# Subscribe to CameraInfo msg
+		self.telloCameraInfo_topic = "/cv_camera/camera_info_converted"
+		self.telloCameraInfo_sub = rospy.Subscriber(
+						self.telloCameraInfo_topic, 
+						CameraInfo, 
+						self.cbCameraInfo
+						)
+
 		# Publish to Twist msg
 		self.partyTwist_topic = "/cmd_vel"
 		self.partyTwist_pub = rospy.Publisher(
@@ -108,107 +138,102 @@ class CameraAprilTag:
 					queue_size=10
 					)
 
+		# Subscribe to Int64 msg
+		self.rstEncLeft_topic = "/rstEncLeft"
+		self.rstEncLeft_pub = rospy.Subscriber(
+					self.rstEncLeft_topic, 
+					Bool, 
+					queue_size=10
+					)
+
+		# Subscribe to Int64 msg
+		self.rstEncRight_topic = "/rstEncRight"
+		self.rstEncRight_pub = rospy.Subscriber(
+					self.rstEncRight_topic, 
+					Bool, 
+					queue_size=10
+					)
+
 		# Allow up to one second to connection
 		rospy.sleep(1)
 
-	def cbLaser(self, msg):
-		try :
-			self.scanValue = msg.ranges
-			self.minAng = msg.angle_min
-		except KeyboardInterrupt as e :
+	# Get Encoder reading
+	def cbEncoderLeft(self, msg):
+
+		try:
+			self.val_encLeft = msg.data
+
+		except KeyboardInterrupt as e:
 			print(e)
-		if self.scanValue is not None :
-			self.laser_received = True
-		else :
-			self.laser_received = False
-	
+
+		if self.val_encLeft is not None:
+			self.encLeft_received = True
+		else:
+			self.encLeft_received = False
+			
+	# Get Encoder reading
+	def cbEncoderRight(self, msg):
+
+		try:
+			self.val_encRight = msg.data
+
+		except KeyboardInterrupt as e:
+			print(e)
+
+		if self.val_encRight is not None:
+			self.encRight_received = True
+		else:
+			self.encRight_received = False	
+
+	# Get AprilTagDetectionStatus reading
+	def cbAprilTagDetectionStatus(self, msg):
+
+		try:
+			self.apriltag_detection_status = msg.data
+
+		except KeyboardInterrupt as e:
+			print(e)
+
+		if self.apriltag_detection_status is not None:
+			self.apriltagStatus_received = True
+		else:
+			self.apriltagStatus_received = False	
+
+	# Get AprilTagDetectionID reading
+	def cbAprilTagDetectionID(self, msg):
+
+		try:
+			self.apriltag_detection_ID = msg.data
+
+		except KeyboardInterrupt as e:
+			print(e)
+
+		if self.apriltag_detection_ID is not None:
+			self.apriltagID_received = True
+		else:
+			self.apriltagID_received = False		
+
 	# Convert image to OpenCV format
 	def cbCameraInfo(self, msg):
 
 		self.imgWidth = msg.width
 		self.imgHeight = msg.height
 		
-		if self.imgWidth is not None and self.imgHeight is not None:
-			self.getInfo = True
-		else:
-			self.getInfo = False
-		
 	# Convert image to OpenCV format
 	def cbObjCoord(self, msg):
 
-		self.objCoordX = msg.centerX
-		self.objCoordY = msg.centerY
+		self.objectCoordX = msg.centerX
+		self.objectCoordY = msg.centerY
 		
-		if self.objCoordX is not None and self.objCoordY is not None:
-	 		self.getCoord = True
- 		else:
-			self.getCoord = False
-		
-	def cbScan(self) :
-		scan_filter =[]
-		samples = len(self.scanValue)
-		samples_view = 1024
-		
-		if samples_view > samples:
-			samples_view = samples_view
-			
-		if samples_view is 1 :
-			scan_filter.append(self.scanValue[len(self.scanValue) //2 ])
-			
-		else : 
-			right_lidar_samples = self.scanValue[len(self.scanValue) // 2:len(self.scanValue)]
-			left_lidar_samples = self.scanValue[0: (len(self.scanValue) // 2) -1]
-			scan_filter.extend(left_lidar_samples + right_lidar_samples)
-			
-		for i in range(len(scan_filter)) :
-			if scan_filter[i] == float ('Inf'):
-				scan_filter[i] = 3.5
-			elif math.isnan(scan_filter[i]):
-				scan_filter[i] = 0
-				
-		return scan_filter
-		
-#	def cbRightEnc(self,msg) :
-#	
-#		try :
-#			self.val_encRight = msg.data
-#		except KeyboardInterrupt as e :
-#			print(e)
-#			
-#		if self.val_encRight is not None :
-#			self.encRight_received = True 
-#		else:
-#			self.encRight_received = False
-#			
-#	def cbLeftEnc(self,msg) :
-#	
-#		try :
-#			self.val_encLeft = msg.data
-#		except KeyboardInterrupt as e :
-#			print(e)
-#			
-#		if self.val_encLeft is not None :
-#			self.encLeft_received = True 
-#		else:
-#			self.encLeft_received = False
-	
-#	def cbParty(self) :
-#		if self.encLeft_received and encRight_received :
-#		
-#			if self.val_encLeft <= 1000 :
-			
-			
-	
-
 	def cbAprilTag(self):
-		self.cbPIDerr()
 
+		self.cbPIDerr()
 
 	# show information callback
 	def cbPIDerr(self):
 
-		self.panErr, self.panOut = self.cbPIDprocess(self.panPID, self.objCoordX, self.imgWidth // 2)
-		self.tiltErr, self.tiltOut = self.cbPIDprocess(self.tiltPID, self.objCoordY, self.imgHeight // 2)
+		self.panErr, self.panOut = self.cbPIDprocess(self.panPID, self.objectCoordX, self.imgWidth // 2)
+		self.tiltErr, self.tiltOut = self.cbPIDprocess(self.tiltPID, self.objectCoordY, self.imgHeight // 2)
 
 	def cbPIDprocess(self, pid, objCoord, centerCoord):
 
@@ -219,64 +244,105 @@ class CameraAprilTag:
 		output = pid.update(error)
 
 		return error, output
-
-	def cbCallErr(self):
+		
+	# Main #
+	def cbParty(self):
+	
 		self.cbAprilTag()
-		
-		if self.getInfo and self.getCoord and self.laser_received :
-			lidar_distances = self.cbScan()
-		
-			center = lidar_distances[len(self.scanValue) // 2]
 
-			panSpeed = mapped(abs(self.panOut), 0, self.imgWidth // 2, 0, self.MAX_ANG_VEL)
-			tiltSpeed = mapped(abs(self.tiltOut), 0, self.imgHeight // 2, 0, self.MAX_LIN_VEL)
-		
-			
-			if center > 1.0 and self.tiltOut > 0.04:
-				self.partyTwist.angular.z = -tiltSpeed
-			elif center < 1.0 and self.tiltOut < -0.04:
-				self.partyTwist.angular.z = tiltSpeed
+		panSpeed = mapped(abs(self.panOut), 0, self.imgWidth // 2, 0, self.MAX_LIN_VEL)
+		tiltSpeed = mapped(abs(self.tiltOut), 0, self.imgHeight // 2, 0, self.MAX_ANG_VEL)
+
+		panSpeed = self.constrain(panSpeed, -self.MAX_LIN_VEL, self.MAX_LIN_VEL)
+		tiltSpeed = self.constrain(tiltSpeed, -self.MAX_ANG_VEL, self.MAX_ANG_VEL)
+
+		if self.apriltag_detection_ID == 0:
+			self.taskONE = True
+		elif self.apriltag_detection_ID == 1 and self.taskONE == False:
+			self.taskTWO = True
+		else:
+			self.cbStop()
+			rospy.logwarn("Waiting For Instruction!")
+
+		# Task 1: Search for the ArptilTag
+		if self.taskONE == True:
+			if (self.apriltag_detection_status == True and self.apriltag_detection_ID != 0) or self.val_encLeft >= 1000:
+				self.cbStop()
+				self.taskONE = False
 			else:
-				self.partyTwist.angular.z = 0
-		
-		
-			self.partyTwist.linear.x = 0.0
-			self.partyTwist.linear.y = 0.0
-			self.partyTwist.linear.z = 0.0
-		
-			self.partyTwist.angular.x = 0.0
-			self.partyTwist.angular.y = 0.0
-			
-			self.partyTwist_pub.publish(self.partyTwist)
-				
-		else : 
-			rospy.logerr("No Info Received!")
-			pass
-			
-		# Allow up to one second to connection
-		rospy.sleep(0.1)
+				self.cbRotateR()
 
+		# Task 2: Detected AprilTag ID: 1 and Tracking
+		if self.taskTWO == True:
+			if self.apriltag_detection_status == True and self.apriltag_detection_ID == 1 and self.tiltErr > 10:
+				self.partyTwist.angular.z = -tiltSpeed
+				self.cbMove()
+				self.taskONE = False
 
+	def cbStop(self):
+
+		self.partyTwist.linear.x = 0.0
+		self.partyTwist.linear.y = 0.0
+		self.partyTwist.linear.z = 0.0
+
+		self.partyTwist.angular.x = 0.0
+		self.partyTwist.angular.y = 0.0
+		self.partyTwist.angular.z = 0.0
+
+		self.partyTwist_pub.publish(self.partyTwist)
+
+#		rospy.logwarn("STOP!")
+
+	def cbRotateR(self):
+
+		self.partyTwist.linear.x = 0.0
+		self.partyTwist.linear.y = 0.0
+		self.partyTwist.linear.z = 0.0
+
+		self.partyTwist.angular.x = 0.0
+		self.partyTwist.angular.y = 0.0
+		self.partyTwist.angular.z = -0.02
+
+		self.partyTwist_pub.publish(self.partyTwist)
+		
+	def cbMove(self):
+		self.partyTwist.linear.x = 0.02
+		self.partyTwist.linear.y = 0.0
+		self.partyTwist.linear.z = 0.0
+		
+		self.partyTwist.angular.x = 0.0
+		self.partyTwist.angular.y = 0.0
+		self.partyTwist.angular.z = 0.0
+
+		self.partyTwist_pub.publish(self.partyTwist)
+		
+
+#		rospy.logwarn("TURN RIGHT!")
 
 	# rospy shutdown callback
 	def cbShutdown(self):
 
-		rospy.logerr("AprilTag Tracking Node [OFFLINE]...")
-#		cv2.destroyAllWindows()
+		rospy.logerr("Party Node [OFFLINE]...")
+		
+		self.partyTwist.linear.x = 0.0
+		self.partyTwist.linear.y = 0.0
+		self.partyTwist.linear.z = 0.0
+
+		self.partyTwist.angular.x = 0.0
+		self.partyTwist.angular.y = 0.0
+		self.partyTwist.angular.z = 0.0
+
+		self.partyTwist_pub.publish(self.partyTwist)
 
 if __name__ == '__main__':
 
 	# Initialize
-	rospy.init_node('camera_apriltag_tracking', anonymous=False)
-	camera = CameraAprilTag()
-	
+	rospy.init_node('party', anonymous=False)
+	p = Party()
+
 	r = rospy.Rate(10)
 	
 	# Camera preview
 	while not rospy.is_shutdown():
-		camera.cbCallErr()
+		p.cbParty()
 		r.sleep()
-
-
-
-import rospy
