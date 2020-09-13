@@ -76,6 +76,8 @@ class Party:
 		self.tiltPID.initialize()
 		
 		self.partyTwist = Twist()
+		self.resetLeft = Bool()
+		self.resetRight = Bool()
 
 		rospy.logwarn("Party Node [ONLINE]...")
 
@@ -140,7 +142,7 @@ class Party:
 
 		# Subscribe to Int64 msg
 		self.rstEncLeft_topic = "/rstEncLeft"
-		self.rstEncLeft_pub = rospy.Subscriber(
+		self.rstEncLeft_pub = rospy.Publisher(
 					self.rstEncLeft_topic, 
 					Bool, 
 					queue_size=10
@@ -148,7 +150,7 @@ class Party:
 
 		# Subscribe to Int64 msg
 		self.rstEncRight_topic = "/rstEncRight"
-		self.rstEncRight_pub = rospy.Subscriber(
+		self.rstEncRight_pub = rospy.Publisher(
 					self.rstEncRight_topic, 
 					Bool, 
 					queue_size=10
@@ -240,15 +242,99 @@ class Party:
 		if self.taskONE == True:
 			if (self.apriltag_detection_status == True and self.apriltag_detection_ID != 0) or self.val_encLeft >= 1000:
 				self.cbStop
+				self.resetLeft.data = True
+				self.rstEncLeft_pub.publish(self.resetLeft)
+				self.resetRight.data = True
+				self.rstEncRight_pub.publish(self.resetRight)
 				self.taskONE = False
 			else:
 				self.cbRotateR()
 
 		# Task 2: Detected AprilTag ID: 1 and Tracking
 		if self.taskTWO == True:
-			if self.apriltag_detection_status == True and self.apriltag_detection_ID != 0:
-				self.cbStop
-				self.taskONE = False
+			if self.apriltag_detection_status == True and self.apriltag_detection_ID == 1:
+				self.cbCallErr()
+			else:
+				self.taskTWO = False
+
+	def cbAprilTag(self):
+
+		self.cbPIDerr()
+
+	# show information callback
+	def cbPIDerr(self):
+
+		self.panErr, self.panOut = self.cbPIDprocess(self.panPID, self.objectCoordX, self.imgWidth // 2)
+		self.tiltErr, self.tiltOut = self.cbPIDprocess(self.tiltPID, self.objectCoordY, self.imgHeight // 2)
+
+	def cbPIDprocess(self, pid, objCoord, centerCoord):
+
+		# calculate the error
+		error = centerCoord - objCoord
+
+		# update the value
+		output = pid.update(error)
+
+		return error, output
+
+	def cbCallErr(self):
+		self.cbAprilTag()
+
+		panSpeed = mapped(abs(self.panOut), 0, self.imgWidth // 2, 0, self.MAX_LIN_VEL)
+		tiltSpeed = mapped(abs(self.tiltOut), 0, self.imgHeight // 2, 0, self.MAX_ANG_VEL)
+
+		panSpeed = self.constrain(panSpeed, -self.MAX_LIN_VEL, self.MAX_LIN_VEL)
+		tiltSpeed = self.constrain(tiltSpeed, -self.MAX_ANG_VEL, self.MAX_ANG_VEL)
+			
+		if self.tiltErr > 10:
+			self.partyTwist.linear.x = 0.0
+			self.partyTwist.linear.y = 0.0
+			self.partyTwist.linear.z = 0.0
+
+			self.partyTwist.angular.x = 0.0
+			self.partyTwist.angular.y = 0.0
+			self.partyTwist.angular.z = -tiltSpeed
+
+		elif self.tiltErr < -10:
+			self.partyTwist.linear.x = 0.0
+			self.partyTwist.linear.y = 0.0
+			self.partyTwist.linear.z = 0.0
+
+			self.partyTwist.angular.x = 0.0
+			self.partyTwist.angular.y = 0.0
+			self.partyTwist.angular.z = tiltSpeed
+		else:
+			self.partyTwist.linear.x = 0.0
+			self.partyTwist.linear.y = 0.0
+			self.partyTwist.linear.z = 0.0
+
+			self.partyTwist.angular.x = 0.0
+			self.partyTwist.angular.y = 0.0
+			self.partyTwist.angular.z = 0.0
+
+		self.partyTwist_pub.publish(self.partyTwist)
+
+	def constrain(self, input, low, high):
+		if input < low:
+			input = low
+		elif input > high:
+			input = high
+		else:
+			input = input
+
+		return input
+
+	def cbMove(self):
+
+		self.partyTwist.linear.x = 0.02
+		self.partyTwist.linear.y = 0.0
+		self.partyTwist.linear.z = 0.0
+
+		self.partyTwist.angular.x = 0.0
+		self.partyTwist.angular.y = 0.0
+		self.partyTwist.angular.z = 0.0
+
+		self.partyTwist_pub.publish(self.partyTwist)
 
 	def cbStop(self):
 

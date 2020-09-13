@@ -191,7 +191,7 @@ class CameraAprilTag:
 				(255, 0, 0), 
 				2)
 
-			if result[0][1] == 0 or result[0][1] == 1:
+			if result[0][1] == 0:# or result[0][1] == 1:
 				self.objectCoord.centerX = self.imgWidth // 2
 				self.objectCoord.centerY = self.imgHeight // 2
 			else:
