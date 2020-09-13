@@ -25,16 +25,16 @@ from sensor_msgs.msg import Image, CameraInfo, CompressedImage
 from cv_bridge import CvBridge
 from cv_bridge import CvBridgeError
 
-from tello_driver.msg import TelloStatus
+#from tello_driver.msg import TelloStatus
 
-from nav_msgs.msg import Odometry
+#from nav_msgs.msg import Odometry
 
-from sensor_msgs.msg import Imu
+#from sensor_msgs.msg import Imu
 
-from common_tello_application.msg import objCenter as objCoord
+from common_gerobot_application.msg import objCenter as objCoord
 
-from common_tello_application.pid import PID
-from common_tello_application.makesimpleprofile import map as mapped
+from common_gerobot_application.pid import PID
+from common_gerobot_application.makesimpleprofile import map as mapped
 
 from geometry_msgs.msg import Twist
 
