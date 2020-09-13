@@ -40,16 +40,13 @@ class CameraAprilTag:
 		self.bridge = CvBridge()
 		self.image_received = False
 		self.detector = apriltag.Detector()
-		self.objectCoord = objCoord()
+		self.objCoord = objCoord()
 		self.panErrval = Float32()
 		self.partyTwist = Twist()
 		
 		self.laser_received = False
 #		self.encLeft_received = False
 #		self.encRight_received = False
-		
-		
-
 
 		self.MAX_LIN_VEL = 0.005
 		self.MAX_ANG_VEL = 0.005
@@ -139,10 +136,10 @@ class CameraAprilTag:
 	# Convert image to OpenCV format
 	def cbObjCoord(self, msg):
 
-		self.objectCoordX = msg.centerX
-		self.objectCoordY = msg.centerY
+		self.objCoordX = msg.centerX
+		self.objCoordY = msg.centerY
 		
-		if self.objX is not None and self.objY is not None:
+		if self.objCoordX is not None and self.objCoordY is not None:
 	 		self.getCoord = True
  		else:
 			self.getCoord = False
@@ -204,14 +201,14 @@ class CameraAprilTag:
 	
 
 	def cbAprilTag(self):
-		Self.cbPIDerr()
+		self.cbPIDerr()
 
 
 	# show information callback
 	def cbPIDerr(self):
 
-		self.panErr, self.panOut = self.cbPIDprocess(self.panPID, self.objectCoordX, self.imgWidth // 2)
-		self.tiltErr, self.tiltOut = self.cbPIDprocess(self.tiltPID, self.objectCoordY, self.imgHeight // 2)
+		self.panErr, self.panOut = self.cbPIDprocess(self.panPID, self.objCoordX, self.imgWidth // 2)
+		self.tiltErr, self.tiltOut = self.cbPIDprocess(self.tiltPID, self.objCoordY, self.imgHeight // 2)
 
 	def cbPIDprocess(self, pid, objCoord, centerCoord):
 
@@ -235,7 +232,7 @@ class CameraAprilTag:
 			tiltSpeed = mapped(abs(self.tiltOut), 0, self.imgHeight // 2, 0, self.MAX_LIN_VEL)
 		
 			
-			if center > 1.0 and elf.tiltOut > 0.04:
+			if center > 1.0 and self.tiltOut > 0.04:
 				self.partyTwist.angular.z = -tiltSpeed
 			elif center < 1.0 and self.tiltOut < -0.04:
 				self.partyTwist.angular.z = tiltSpeed
