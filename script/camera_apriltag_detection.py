@@ -215,7 +215,7 @@ class CameraAprilTag:
 		if self.image_received:
 #			self.cbInfo()
 			self.cbAprilTag()
-			self.cbShowImage()
+#			self.cbShowImage()
 		else:
 			rospy.logerr("No images recieved")
 
