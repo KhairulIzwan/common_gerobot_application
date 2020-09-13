@@ -304,7 +304,7 @@ class Party:
 			self.partyTwist.angular.y = 0.0
 			self.partyTwist.angular.z = tiltSpeed
 		else:
-			self.partyTwist.linear.x = 0.0
+			self.partyTwist.linear.x = 0.03
 			self.partyTwist.linear.y = 0.0
 			self.partyTwist.linear.z = 0.0
 
