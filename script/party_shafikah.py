@@ -245,6 +245,16 @@ class Party:
 
 		return error, output
 		
+	def constrain(self, input, low, high):
+		if input < low:
+			input = low
+		elif input > high:
+			input = high
+		else:
+			input = input
+
+		return input
+		
 	# Main #
 	def cbParty(self):
 	
@@ -274,8 +284,9 @@ class Party:
 
 		# Task 2: Detected AprilTag ID: 1 and Tracking
 		if self.taskTWO == True:
-			if self.apriltag_detection_status == True and self.apriltag_detection_ID == 1 and self.tiltErr > 10:
+			if self.apriltag_detection_status == True and self.apriltag_detection_ID == 1 and self.tiltErr > 10 and self.tiltErr < 10 :
 				self.partyTwist.angular.z = -tiltSpeed
+				self.partyTwist.angular.z = tiltSpeed
 				self.cbMove()
 				self.taskONE = False
 
