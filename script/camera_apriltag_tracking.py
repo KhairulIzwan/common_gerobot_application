@@ -118,45 +118,11 @@ class CameraAprilTag:
 
 		self.cbPIDerr()
 
-#	# Show the output frame
-#	def cbShowImage(self):
-
-#		self.cv_image_clone = imutils.resize(
-#					self.cv_image.copy(), 
-#					width=320
-#					)
-
-#		cv2.imshow("AprilTag Tracking", self.cv_image_clone)
-#		cv2.waitKey(1)
-
-#	# Preview image + info
-#	def cbPreview(self):
-
-#		if self.image_received:
-#			self.cbInfo()
-#			self.cbAprilTag()
-#			self.cbShowImage()
-#		else:
-#			rospy.logerr("No images recieved")
-
-#	# Publish to objCenter msg
-#	def pubObjCoord(self):
-
-#		self.objectCoord.centerX = self.cv_image_height
-#		self.objectCoord.centerY = self.cv_image_width
-
-#		self.objCoord_pub.publish(self.objectCoord)
-
 	# show information callback
 	def cbPIDerr(self):
 
 		self.panErr, self.panOut = self.cbPIDprocess(self.panPID, self.objectCoordX, self.imgWidth // 2)
 		self.tiltErr, self.tiltOut = self.cbPIDprocess(self.tiltPID, self.objectCoordY, self.imgHeight // 2)
-		
-#		rospy.loginfo([self.tiltErr, self.tiltOut])
-
-#		self.panErrval.data = self.panOut
-#		self.panErr_pub.publish(self.panErrval)
 
 	def cbPIDprocess(self, pid, objCoord, centerCoord):
 
@@ -176,30 +142,11 @@ class CameraAprilTag:
 
 		panSpeed = self.constrain(panSpeed, -self.MAX_LIN_VEL, self.MAX_LIN_VEL)
 		tiltSpeed = self.constrain(tiltSpeed, -self.MAX_ANG_VEL, self.MAX_ANG_VEL)
-
-#		if self.panOut < 0:
-#			self.telloCmdVel.linear.x = panSpeed
-#		elif self.panOut > 0:
-#			self.telloCmdVel.linear.x = -panSpeed
-#		else:
-#			self.telloCmdVel.linear.x = 0
 			
 		if self.tiltErr > 10:
-#			self.telloCmdVel.linear.x = 0.0
-#			self.telloCmdVel.linear.y = 0.0
-#			self.telloCmdVel.linear.z = 0.0
-
-#			self.telloCmdVel.angular.x = 0.0
-#			self.telloCmdVel.angular.y = 0.0
 			self.telloCmdVel.angular.z = -tiltSpeed
 
 		elif self.tiltErr < -10:
-#			self.telloCmdVel.linear.x = 0.0
-#			self.telloCmdVel.linear.y = 0.0
-#			self.telloCmdVel.linear.z = 0.0
-
-#			self.telloCmdVel.angular.x = 0.0
-#			self.telloCmdVel.angular.y = 0.0
 			self.telloCmdVel.angular.z = tiltSpeed
 		else:
 			self.telloCmdVel.angular.z = 0.0
@@ -210,7 +157,6 @@ class CameraAprilTag:
 
 		self.telloCmdVel.angular.x = 0.0
 		self.telloCmdVel.angular.y = 0.0
-#		self.telloCmdVel.angular.z = 0.0
 
 		self.telloCmdVel_pub.publish(self.telloCmdVel)
 

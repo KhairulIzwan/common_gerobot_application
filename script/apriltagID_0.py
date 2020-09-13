@@ -20,13 +20,7 @@ import apriltag
 
 # import the necessary ROS packages
 from std_msgs.msg import String, Int64, Bool
-#from sensor_msgs.msg import Image
 from sensor_msgs.msg import CameraInfo
-
-#from cv_bridge import CvBridge
-#from cv_bridge import CvBridgeError
-
-#import math
 from sensor_msgs.msg import LaserScan
 from geometry_msgs.msg import Twist
 
@@ -42,9 +36,6 @@ from common_gerobot_application.makesimpleprofile import map as mapped
 
 class Party:
 	def __init__(self):
-
-#		self.bridge = CvBridge()
-#		self.image_received = False
 		self.encLeft_received = False
 		self.encRight_received = False
 		self.apriltagStatus_received = False
@@ -54,30 +45,10 @@ class Party:
 
 		self.taskONE = False
 		self.taskTWO = False
-
-		self.MAX_LIN_VEL = 0.02
-		self.MAX_ANG_VEL = 0.03
-
-		# set PID values for panning
-		self.panP = 0.5
-		self.panI = 0
-		self.panD = 0
-
-		# set PID values for tilting
-		self.tiltP = 0.5
-		self.tiltI = 0
-		self.tiltD = 0.5
-
-		# create a PID and initialize it
-		self.panPID = PID(self.panP, self.panI, self.panD)
-		self.tiltPID = PID(self.tiltP, self.tiltI, self.tiltD)
-
-		self.panPID.initialize()
-		self.tiltPID.initialize()
 		
 		self.partyTwist = Twist()
 
-		rospy.logwarn("Party Node [ONLINE]...")
+		rospy.logwarn("AprilTag ID-0 Node [ONLINE]...")
 
 		# rospy shutdown
 		rospy.on_shutdown(self.cbShutdown)
@@ -113,22 +84,6 @@ class Party:
 					Int64, 
 					self.cbAprilTagDetectionID
 					)
-
-		# Subscribe to objCenter msg
-		self.objCoord_topic = "/objCoord"
-		self.objCoord_sub = rospy.Subscriber(
-					self.objCoord_topic, 
-					objCoord, 
-					self.cbObjCoord
-					)
-
-		# Subscribe to CameraInfo msg
-		self.telloCameraInfo_topic = "/cv_camera/camera_info_converted"
-		self.telloCameraInfo_sub = rospy.Subscriber(
-						self.telloCameraInfo_topic, 
-						CameraInfo, 
-						self.cbCameraInfo
-						)
 
 		# Publish to Twist msg
 		self.partyTwist_topic = "/cmd_vel"
@@ -213,19 +168,7 @@ class Party:
 		else:
 			self.apriltagID_received = False		
 
-	# Convert image to OpenCV format
-	def cbCameraInfo(self, msg):
-
-		self.imgWidth = msg.width
-		self.imgHeight = msg.height
-		
-	# Convert image to OpenCV format
-	def cbObjCoord(self, msg):
-
-		self.objectCoordX = msg.centerX
-		self.objectCoordY = msg.centerY
-		
-	# Main #
+	# Main
 	def cbParty(self):
 
 		if self.apriltag_detection_ID == 0:
@@ -281,7 +224,7 @@ class Party:
 	# rospy shutdown callback
 	def cbShutdown(self):
 
-		rospy.logerr("Party Node [OFFLINE]...")
+		rospy.logerr("AprilTag ID-0 Node [OFFLINE]...")
 		
 		self.partyTwist.linear.x = 0.0
 		self.partyTwist.linear.y = 0.0
@@ -296,7 +239,7 @@ class Party:
 if __name__ == '__main__':
 
 	# Initialize
-	rospy.init_node('party', anonymous=False)
+	rospy.init_node('apriltag_ID0', anonymous=False)
 	p = Party()
 
 	r = rospy.Rate(10)

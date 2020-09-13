@@ -140,8 +140,6 @@ class CameraAprilTag:
 		cv_image_gray = cv2.cvtColor(self.cv_image, cv2.COLOR_BGR2GRAY)
 		
 		result = self.detector.detect(cv_image_gray)
-		
-#		rospy.loginfo(len(result))
 
 		if len(result) != 0:
 #			for i in range(len(result)):
@@ -207,17 +205,6 @@ class CameraAprilTag:
 
 	# Show the output frame
 	def cbShowImage(self):
-
-
-#		self.cv_image = imutils.rotate_bound(self.cv_image, 90)
-
-		# comment if the image is mirrored
-#		self.cv_image = cv2.flip(self.cv_image, 1)
-
-#		self.cv_image_clone = imutils.resize(
-#					self.cv_image.copy(), 
-#					width=160
-#					)
 
 		cv2.imshow("AprilTag Center", self.cv_image)
 		cv2.waitKey(1)

@@ -228,7 +228,7 @@ class CameraAprilTag:
 if __name__ == '__main__':
 
 	# Initialize
-	rospy.init_node('camera_apriltag', anonymous=False)
+	rospy.init_node('camera_apriltag_detection', anonymous=False)
 	camera = CameraAprilTag()
 	
 	r = rospy.Rate(10)
