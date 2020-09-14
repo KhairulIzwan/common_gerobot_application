@@ -54,6 +54,7 @@ class Party:
 
 		self.taskONE = False
 		self.taskTWO = False
+		self.taskTHREE = False
 
 		self.MAX_LIN_VEL = 0.02
 		self.MAX_ANG_VEL = 0.03
@@ -234,6 +235,8 @@ class Party:
 			self.taskONE = True
 		elif self.apriltag_detection_ID == 2 and self.taskONE == False:
 			self.taskTWO = True
+		elif self.apriltag_detection_ID == 3 and self.taskTWO == False :
+			self.taskTHREE = True
 		else:
 			self.cbStop()
 			rospy.logwarn("Waiting For Instruction!")
@@ -256,6 +259,18 @@ class Party:
 				self.cbCallErr()
 			else:
 				self.taskTWO = False
+				
+		if self.taskTHREE == True :
+			if (self.apriltag_detection_status == True and self.apriltag_detection_ID != 3) or self.val_encLeft >= 1200:
+				self.cbStop
+				self.resetLeft.data = True
+				self.rstEncLeft_pub.publish(self.resetLeft)
+				self.resetRight.data = True
+				self.rstEncRight_pub.publish(self.resetRight)
+				self.taskTHREE = False
+			else:
+				self.cbRotateL()
+		
 
 	def cbAprilTag(self):
 
@@ -363,6 +378,20 @@ class Party:
 		self.partyTwist_pub.publish(self.partyTwist)
 
 #		rospy.logwarn("TURN RIGHT!")
+
+	def cbRotateL(self):
+
+		self.partyTwist.linear.x = 0.0
+		self.partyTwist.linear.y = 0.0
+		self.partyTwist.linear.z = 0.0
+
+		self.partyTwist.angular.x = 0.0
+		self.partyTwist.angular.y = 0.0
+		self.partyTwist.angular.z = 0.02
+
+		self.partyTwist_pub.publish(self.partyTwist)
+
+#		rospy.logwarn("TURN LEFT!")
 
 	# rospy shutdown callback
 	def cbShutdown(self):
