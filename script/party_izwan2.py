@@ -240,7 +240,9 @@ class Party:
 			self.taskTHREE = True
 		elif self.apriltag_detection_ID == 6 and self.taskONE == False and self.taskTWO == False and self.taskTHREE == False :
 			self.taskFOUR = True
-		else :
+		elif self.apriltag_detection_ID == 5 and self.taskONE == False and self.taskTWO == False and self.taskTHREE == False and self.taskFOUR == False :
+			self.taskFIVE = True
+		else
 			self.cbStop()
 			rospy.logwarn("Waiting For Instruction!")
 
@@ -256,14 +258,14 @@ class Party:
 			else:
 				self.cbRotateR()
 
-		# Task 2: Detected AprilTag ID: 2 and Tracking
+		# Task 2: Detected AprilTag ID: 2 and Deliver 
 		if self.taskTWO == True:
 			if self.apriltag_detection_status == True and self.apriltag_detection_ID == 2:
 				self.cbCallErr()
 			else:
 				self.taskTWO = False
 				
-		# Task 3 : Detected AprilTag ID : 3 and Tracking
+		# Task 3 : Detected AprilTag ID : 3 and rotate
 		if self.taskTHREE == True :
 			if (self.apriltag_detection_status == True and self.apriltag_detection_ID != 3) or self.val_encRight >= 1500:
 				self.cbStop
@@ -275,13 +277,20 @@ class Party:
 			else:
 				self.cbRotateL()
 				
+		# Task 4 : Detected AprilTag ID : 6 and move 
 		if self.taskFOUR == True :
 			if (self.apriltag_detection_status == True and self.apriltag_detection_ID == 6) :
 				self.cbCallErr()
 			
 			else:
 				self.taskFOUR = False
-				
+		
+		# Task 5 : Detected AprilTag ID : 5 and move to another area		
+		if self.taskFIVE == True :
+			if (self.apriltag_detection_status == True and self.apriltag_detection_ID == 5) :
+				self.cbCallErr()
+			else: 
+				self.taskFIVE = False
 		
 
 	def cbAprilTag(self):
