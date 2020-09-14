@@ -235,9 +235,11 @@ class Party:
 			self.taskONE = True
 		elif self.apriltag_detection_ID == 2 and self.taskONE == False:
 			self.taskTWO = True
-		elif self.apriltag_detection_ID == 3 and self.taskTWO == False :
+		elif self.apriltag_detection_ID == 3 and self.taskONE == False and self.taskTWO == False :
 			self.taskTHREE = True
-		else:
+		elif self.apriltag_detection_ID == 0 and self.taskONE == False and self.taskTWO == False and self.taskTHREE == False :
+			self.taskFOUR = True
+		else :
 			self.cbStop()
 			rospy.logwarn("Waiting For Instruction!")
 
@@ -253,15 +255,16 @@ class Party:
 			else:
 				self.cbRotateR()
 
-		# Task 2: Detected AprilTag ID: 1 and Tracking
+		# Task 2: Detected AprilTag ID: 2 and Tracking
 		if self.taskTWO == True:
 			if self.apriltag_detection_status == True and self.apriltag_detection_ID == 2:
 				self.cbCallErr()
 			else:
 				self.taskTWO = False
 				
+		# Task 3 : Detected AprilTag ID : 3 and Tracking
 		if self.taskTHREE == True :
-			if (self.apriltag_detection_status == True and self.apriltag_detection_ID != 3) or self.val_encLeft >= 1200:
+			if (self.apriltag_detection_status == True and self.apriltag_detection_ID != 3) or self.val_encRight >= 1200:
 				self.cbStop
 				self.resetLeft.data = True
 				self.rstEncLeft_pub.publish(self.resetLeft)
@@ -270,6 +273,14 @@ class Party:
 				self.taskTHREE = False
 			else:
 				self.cbRotateL()
+				
+		if self.taskFOUR == True :
+			if (self.apriltag_detection_status == True and self.apriltag_detection_ID == 0)
+				self.cbMove()
+			
+			else:s
+				self.cbStop()
+				
 		
 
 	def cbAprilTag(self):
