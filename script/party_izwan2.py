@@ -55,6 +55,7 @@ class Party:
 		self.taskONE = False
 		self.taskTWO = False
 		self.taskTHREE = False
+		self.taskFOUR = False
 
 		self.MAX_LIN_VEL = 0.02
 		self.MAX_ANG_VEL = 0.03
@@ -237,7 +238,7 @@ class Party:
 			self.taskTWO = True
 		elif self.apriltag_detection_ID == 3 and self.taskONE == False and self.taskTWO == False :
 			self.taskTHREE = True
-		elif self.apriltag_detection_ID == 0 and self.taskONE == False and self.taskTWO == False and self.taskTHREE == False :
+		elif self.apriltag_detection_ID == 6 and self.taskONE == False and self.taskTWO == False and self.taskTHREE == False :
 			self.taskFOUR = True
 		else :
 			self.cbStop()
@@ -264,7 +265,7 @@ class Party:
 				
 		# Task 3 : Detected AprilTag ID : 3 and Tracking
 		if self.taskTHREE == True :
-			if (self.apriltag_detection_status == True and self.apriltag_detection_ID != 3) or self.val_encRight >= 1200:
+			if (self.apriltag_detection_status == True and self.apriltag_detection_ID != 3) or self.val_encRight >= 1500:
 				self.cbStop
 				self.resetLeft.data = True
 				self.rstEncLeft_pub.publish(self.resetLeft)
@@ -275,11 +276,11 @@ class Party:
 				self.cbRotateL()
 				
 		if self.taskFOUR == True :
-			if (self.apriltag_detection_status == True and self.apriltag_detection_ID == 0)
-				self.cbMove()
+			if (self.apriltag_detection_status == True and self.apriltag_detection_ID == 6) :
+				self.cbCallErr()
 			
-			else:s
-				self.cbStop()
+			else:
+				self.taskFOUR = False
 				
 		
 
