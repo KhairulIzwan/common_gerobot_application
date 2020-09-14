@@ -56,7 +56,6 @@ class Party:
 		self.taskTWO = False
 		self.taskTHREE = False
 		self.taskFOUR = False
-		self.taskFIVE = False
 
 		self.MAX_LIN_VEL = 0.02
 		self.MAX_ANG_VEL = 0.03
@@ -235,15 +234,15 @@ class Party:
 
 		if self.apriltag_detection_ID == 0:
 			self.taskONE = True
-		elif self.apriltag_detection_ID == 4 and self.taskONE == False:
+		elif self.apriltag_detection_ID == 2 and self.taskONE == False:
 			self.taskTWO = True
 		elif self.apriltag_detection_ID == 3 and self.taskONE == False and self.taskTWO == False :
 			self.taskTHREE = True
 		elif self.apriltag_detection_ID == 6 and self.taskONE == False and self.taskTWO == False and self.taskTHREE == False :
 			self.taskFOUR = True
-		elif self.apriltag_detection_ID == 1 and self.taskONE == False and self.taskTWO == False and self.taskTHREE == False and self.taskFOUR == False :
+		elif self.apriltag_detection_ID == 5 and self.taskONE == False and self.taskTWO == False and self.taskTHREE == False and self.taskFOUR == False :
 			self.taskFIVE = True
-		else :
+		else
 			self.cbStop()
 			rospy.logwarn("Waiting For Instruction!")
 
@@ -257,11 +256,11 @@ class Party:
 				self.rstEncRight_pub.publish(self.resetRight)
 				self.taskONE = False
 			else:
-				self.cbRotateL()
+				self.cbRotateR()
 
 		# Task 2: Detected AprilTag ID: 2 and Deliver 
 		if self.taskTWO == True:
-			if self.apriltag_detection_status == True and self.apriltag_detection_ID == 4:
+			if self.apriltag_detection_status == True and self.apriltag_detection_ID == 2:
 				self.cbCallErr()
 			else:
 				self.taskTWO = False
@@ -288,7 +287,7 @@ class Party:
 		
 		# Task 5 : Detected AprilTag ID : 5 and move to another area		
 		if self.taskFIVE == True :
-			if (self.apriltag_detection_status == True and self.apriltag_detection_ID == 1) :
+			if (self.apriltag_detection_status == True and self.apriltag_detection_ID == 5) :
 				self.cbCallErr()
 			else: 
 				self.taskFIVE = False
