@@ -242,7 +242,7 @@ class Party:
 			self.taskFOUR = True
 		elif self.apriltag_detection_ID == 5 and self.taskONE == False and self.taskTWO == False and self.taskTHREE == False and self.taskFOUR == False :
 			self.taskFIVE = True
-		else
+		else :
 			self.cbStop()
 			rospy.logwarn("Waiting For Instruction!")
 
