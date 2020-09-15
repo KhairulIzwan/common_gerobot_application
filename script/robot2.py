@@ -53,7 +53,7 @@ class Party:
 		self.pc_apriltagStatus_received = False
 		self.pc_apriltagID_received = False
 		
-		self.apriltag_detection_ID = None
+		self.pc_apriltag_detection_ID = None
 		self.pc_apriltag_detection_ID = None
 
 		self.taskONE = False
