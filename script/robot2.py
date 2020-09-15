@@ -50,7 +50,11 @@ class Party:
 		self.apriltagStatus_received = False
 		self.apriltagID_received = False
 		
+		self.pc_apriltagStatus_received = False
+		self.pc_apriltagID_received = False
+		
 		self.apriltag_detection_ID = None
+		self.pc_apriltag_detection_ID = None
 
 		self.taskONE = False
 		self.taskTWO = False
@@ -119,6 +123,22 @@ class Party:
 					self.cbAprilTagDetectionID
 					)
 
+		# Subscribe to Bool msg
+		self.pcapriltagStatus_topic = "/pc_apriltag_detection_status"
+		self.pcapriltagStatus_sub = rospy.Subscriber(
+					self.pcapriltagStatus_topic, 
+					Bool, 
+					self.cbPCAprilTagDetectionStatus
+					)
+
+		# Subscribe to Int64 msg
+		self.pcapriltagID_topic = "/pc_apriltag_detection_ID"
+		self.pcapriltagID_sub = rospy.Subscriber(
+					self.pcapriltagID_topic, 
+					Int64, 
+					self.cbPCAprilTagDetectionID
+					)
+
 		# Subscribe to objCenter msg
 		self.objCoord_topic = "/objCoord"
 		self.objCoord_sub = rospy.Subscriber(
@@ -126,6 +146,14 @@ class Party:
 					objCoord, 
 					self.cbObjCoord
 					)
+					
+#		# Subscribe to objCenter msg
+#		self.pc_objCoord_topic = "/pc_objCoord"
+#		self.pc_objCoord_sub = rospy.Subscriber(
+#					self.pc_objCoord_topic, 
+#					objCoord, 
+#					self.PCcbObjCoord
+#					)
 
 		# Subscribe to CameraInfo msg
 		self.telloCameraInfo_topic = "/cv_camera/camera_info_converted"
@@ -216,7 +244,34 @@ class Party:
 		if self.apriltag_detection_ID is not None:
 			self.apriltagID_received = True
 		else:
-			self.apriltagID_received = False		
+			self.apriltagID_received = False
+			
+	def cbPCAprilTagDetectionStatus(self, msg):
+
+		try:
+			self.pc_apriltag_detection_status = msg.data
+
+		except KeyboardInterrupt as e:
+			print(e)
+
+		if self.pc_apriltag_detection_status is not None:
+			self.pc_apriltagStatus_received = True
+		else:
+			self.pc_apriltagStatus_received = False	
+
+	# Get AprilTagDetectionID reading
+	def cbPCAprilTagDetectionID(self, msg):
+
+		try:
+			self.pc_apriltag_detection_ID = msg.data
+
+		except KeyboardInterrupt as e:
+			print(e)
+
+		if self.pc_apriltag_detection_ID is not None:
+			self.pc_apriltagID_received = True
+		else:
+			self.pc_apriltagID_received = False		
 
 	# Convert image to OpenCV format
 	def cbCameraInfo(self, msg):
@@ -229,11 +284,17 @@ class Party:
 
 		self.objectCoordX = msg.centerX
 		self.objectCoordY = msg.centerY
+	
+#	# Convert image to OpenCV format
+#	def cbPCObjCoord(self, msg):
+
+#		self.pc_objectCoordX = msg.centerX
+#		self.pc_objectCoordY = msg.centerY
 		
 	# Main #
 	def cbParty(self):
 
-		if self.apriltag_detection_ID == 0:
+		if self.apriltag_detection_ID == 0 or self.pc_apriltag_detection_ID == 0:
 			self.taskONE = True
 		elif self.apriltag_detection_ID == 4 and self.taskONE == False:
 			self.taskTWO = True
@@ -249,7 +310,7 @@ class Party:
 
 		# Task 1: Search for the ArptilTag
 		if self.taskONE == True:
-			if (self.apriltag_detection_status == True and self.apriltag_detection_ID != 0) or self.val_encLeft >= 1200:
+			if ((self.apriltag_detection_status == True and self.apriltag_detection_ID != 0) and (self.pc_apriltag_detection_status == False and self.pc_apriltag_detection_ID != 0)) or self.val_encLeft >= 1200:
 				self.cbStop
 				self.resetLeft.data = True
 				self.rstEncLeft_pub.publish(self.resetLeft)
@@ -261,7 +322,7 @@ class Party:
 
 		# Task 2: Detected AprilTag ID: 2 and Deliver 
 		if self.taskTWO == True:
-			if self.apriltag_detection_status == True and self.apriltag_detection_ID == 4:
+			if ((self.apriltag_detection_status == True and self.apriltag_detection_ID == 4)and (self.pc_apriltag_detection_status == False and self.pc_apriltag_detection_ID != 4)):
 				self.cbCallErr()
 			else:
 				self.taskTWO = False
