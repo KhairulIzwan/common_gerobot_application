@@ -56,6 +56,7 @@ class Party:
 		self.taskTWO = False
 		self.taskTHREE = False
 		self.taskFOUR = False
+		self.taskFIVE = False
 
 		self.MAX_LIN_VEL = 0.02
 		self.MAX_ANG_VEL = 0.03
@@ -242,7 +243,7 @@ class Party:
 			self.taskFOUR = True
 		elif self.apriltag_detection_ID == 5 and self.taskONE == False and self.taskTWO == False and self.taskTHREE == False and self.taskFOUR == False :
 			self.taskFIVE = True
-		else
+		else :
 			self.cbStop()
 			rospy.logwarn("Waiting For Instruction!")
 
@@ -275,7 +276,7 @@ class Party:
 				self.rstEncRight_pub.publish(self.resetRight)
 				self.taskTHREE = False
 			else:
-				self.cbRotateL()
+				self.cbRotateR()
 				
 		# Task 4 : Detected AprilTag ID : 6 and move 
 		if self.taskFOUR == True :
