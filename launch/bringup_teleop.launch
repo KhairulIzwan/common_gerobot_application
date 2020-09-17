@@ -1,0 +1,24 @@
+<launch>
+
+	<!-- COMMON_GEROBOT_APPLICATION {DC MOTOR} -->
+	<include file="$(find common_gerobot_application)/launch/dc_motor_control.launch"/>
+
+	<!-- COMMON_GEROBOT_APPLICATION {ENCODER} -->
+	<include file="$(find common_gerobot_application)/launch/encoder_control.launch"/>
+
+	<!-- COMMON_GEROBOT_APPLICATION {ACCELEROMETER} -->
+	<!-- <include file="$(find common_gerobot_application)/launch/accelerometer_control.launch"/> -->
+
+	<!-- COMMON_GEROBOT_APPLICATION {HOKUYO} -->
+	<include file="$(find common_gerobot_application)/launch/hokuyo_control.launch"/>
+
+	<!-- COMMON_GEROBOT_APPLICATION {CAMERA} -->
+	<include file="$(find common_gerobot_application)/launch/camera_control.launch"/>
+
+	<!-- COMMON_GEROBOT_APPLICATION {CAMERA_CONVERTER} -->
+	<include file="$(find common_gerobot_application)/launch/camera_converter.launch"/>
+
+	<!-- COMMON_GEROBOT_APPLICATION {TELEOP_CONTROL} -->
+	<include file="$(find common_gerobot_application)/launch/teleop_control.launch"/>
+
+</launch>
