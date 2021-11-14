@@ -148,8 +148,8 @@ we can simply execute:
 which is equivalent to:
 
 1. roslaunch common_gerobot_application camera_control.launch
-2. roslaunch common_gerobot_application dc_motor_control.launch
-3. roslaunch common_gerobot_application encoder_control.launch
-4. roslaunch common_gerobot_application hokuyo_control.launch
-5. roslaunch common_gerobot_application accelerometer_control.launch
-6. roslaunch common_gerobot_application camera_converter.launch
+2. roslaunch common_gerobot_application camera_converter.launch
+3. roslaunch common_gerobot_application hokuyo_control.launch
+4. roslaunch common_gerobot_application dc_motor_control.launch
+5. roslaunch common_gerobot_application encoder_control.launch
+6. roslaunch common_gerobot_application accelerometer_control.launch
